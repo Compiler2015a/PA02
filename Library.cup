@@ -32,7 +32,7 @@ classDecl ::= CLASS_KEYWORD CLASS_ID EXTENDS_KEYWORD CLASS_ID LB method_list RB
 classDecl_list ::= classDecl_list classDecl | classDecl;
 			
 method ::= STATIC_KEYWORD method_type ID LP formal_list RP SEMICOLON /* LB stmnt_list RB */
-			| method_type ID LP formal_list RP SEMICOLON /* LB stmnt_list RB; */
+			| method_type ID LP formal_list RP SEMICOLON; /* LB stmnt_list RB; */
 			
 method_list ::= method_list method | method;
 			
