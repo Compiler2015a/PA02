@@ -1,4 +1,4 @@
-package Parser;
+package IC.Parser;
 
 import java.io.IOException;
 

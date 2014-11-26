@@ -1,4 +1,4 @@
-package Parser;
+package IC.Parser;
 public class sym {
 	
 	public static final int EOF=0;

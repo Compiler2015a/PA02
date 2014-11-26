@@ -1,4 +1,4 @@
-package Parser;
+package IC.Parser;
 import java_cup.runtime.Symbol;
 
 public class Token extends Symbol {
@@ -21,13 +21,13 @@ public class Token extends Symbol {
 	public String getTag() {
 		switch (sym) {
 		
-			case Parser.sym.ID:
+			case IC.Parser.sym.ID:
 				return "ID";
-			case Parser.sym.CLASS_ID:
+			case IC.Parser.sym.CLASS_ID:
 				return "CLASS_ID";
-			case Parser.sym.INTEGER_LITERAL:
+			case IC.Parser.sym.INTEGER_LITERAL:
 				return "INTEGER";
-			case Parser.sym.STRING_LITERAL:
+			case IC.Parser.sym.STRING_LITERAL:
 				return "STRING";
 		}
 		

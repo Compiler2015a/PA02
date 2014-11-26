@@ -1,19 +1,90 @@
-package IC.Parser;
+import java_cup.runtime.*;
 
-import IC.AST.*;
+/* Preliminaries to set up and use the scanner.  */
+init with {: scanner.init();              :};
+scan with {: return scanner.next_token(); :};
 
-////////////////////////////////////////////
-// Symbol list (terminals and non-terminals)
+/* Terminals (tokens returned by the scanner). */
+terminal			ID, CLASS_ID, SEMICOLON, COMMA;
 
-nonterminal Program Program;
+// Keywords
+terminal			CLASS_KEYWORD, EXTENDS_KEYWORD, STATIC_KEYWORD, VOID_KEYWORD,
+					INT_KEYWORD, BOOLEAN_KEYWORD, STRING_KEYWORD, RETURN_KEYWORD,
+					IF_KEYWORD, ELSE_KEYWORD, WHILE_KEYWORD, BREAK_KEYWORD, CONTINUE_KEYWORD,
+					THIS_KEYWORD, NEW_KEYWORD, LENGTH_KEYWORD;
 
-terminal         ASSIGN;
-terminal Integer INTEGER;
+// Literals
+terminal			TRUE_LITERAL, FALSE_LITERAL, NULL_LITERAL, STRING_LITERAL;
+terminal Integer    INTEGER_LITERAL;
 
-//////////////////////////
-// Precedence declarations
+// Operators and signs
+terminal			LP, RP, LC, RC, LB, RB, DOT, EXCLAMATION_MARK, PLUS, MINUS, MULT,
+					DEVIDE, REMINDER, SMALLER_OP, LARGER_OP, SMALLER_EQ_OP, LARGER_EQ_OP,
+					EQUALS_OP, NOT_EQUALS_OP, AND_OP, OR_OP, ASSIGN;
 
-//////////////
-// The grammar
 
-Literal ::= INTEGER | NULL;
+/* Non terminals */
+non terminal            program, classDecl_list, classDecl, classLines_list, type, method_type, 
+						class_id, expr_list, expr_part, method, field, extra_fields,
+						formals, extra_formals, stmnt, stmnt_list, call,
+						staticCall, virtualCall, extra_exprs, location, binop, unop, literal;
+non terminal Integer    expr;
+
+/* Precedences */
+/* precedence left PLUS, MINUS; */
+/* precedence left TIMES, DIVIDE, MOD; */
+/* precedence left UMINUS; */
+
+/* The grammar */
+program ::= classDecl_list;
+
+classDecl ::= CLASS_KEYWORD CLASS_ID EXTENDS_KEYWORD CLASS_ID LB classLines_list RB
+			| CLASS_KEYWORD CLASS_ID LB classLines_list RB; 
+			
+classDecl_list ::= classDecl classDecl_list | ;
+
+classLines_list ::= method classLines_list | field classLines_list | ;
+
+field ::= type ID extra_fields;
+
+extra_fields ::= COMMA ID extra_fields | SEMICOLON;
+
+method ::= STATIC_KEYWORD method_type ID LP formals RP LB stmnt_list RB 
+			| method_type ID LP formals RP LB stmnt_list RB; 
+
+formals ::= type ID extra_formals | ;
+
+extra_formals ::= COMMA type ID extra_formals | ;
+
+type ::= INT_KEYWORD | BOOLEAN_KEYWORD | STRING_KEYWORD | CLASS_ID | type LC RC;
+		
+method_type ::= type | VOID_KEYWORD;
+			
+stmnt_list ::= stmnt stmnt_list  | ; 
+
+stmnt ::= 	location ASSIGN expr SEMICOLON | call SEMICOLON | RETURN_KEYWORD SEMICOLON |
+			RETURN_KEYWORD expr SEMICOLON | IF_KEYWORD LP expr RP stmnt | 
+			IF_KEYWORD LP expr RP stmnt ELSE_KEYWORD stmnt | WHILE_KEYWORD LP expr RP stmnt |
+			BREAK_KEYWORD SEMICOLON | CONTINUE_KEYWORD SEMICOLON | LB stmnt_list RB |
+			type ID SEMICOLON | type ID ASSIGN expr SEMICOLON;
+			
+expr ::=	location | call | THIS_KEYWORD | NEW_KEYWORD CLASS_ID LP RP | NEW_KEYWORD type LC RC |
+			expr DOT LENGTH_KEYWORD | expr binop expr | unop expr | literal | LP expr RP;
+	
+call ::=	staticCall | virtualCall;
+
+staticCall ::= CLASS_ID DOT ID LP RP | CLASS_ID DOT ID LP expr extra_exprs RP;
+
+virtualCall ::= expr DOT ID LP expr extra_exprs RP | ID LP expr extra_exprs RP;
+
+extra_exprs ::=	COMMA expr extra_exprs | ;
+
+location ::= ID | expr DOT ID | expr LC expr RC;
+
+binop ::= 	PLUS | MINUS | MULT | DEVIDE | REMINDER | SMALLER_OP |
+			LARGER_OP | SMALLER_EQ_OP | LARGER_EQ_OP | EQUALS_OP | 
+			NOT_EQUALS_OP | AND_OP | OR_OP;
+			
+unop ::=	MINUS | EXCLAMATION_MARK;
+
+literal ::= INTEGER_LITERAL | STRING_LITERAL | TRUE_LITERAL | FALSE_LITERAL | NULL_LITERAL;
