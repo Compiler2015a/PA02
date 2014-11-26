@@ -1,4 +1,7 @@
+package IC.Parser;
 import java_cup.runtime.*;
+
+import IC.AST.*;
 
 /* Preliminaries to set up and use the scanner.  */
 init with {: scanner.init();              :};
