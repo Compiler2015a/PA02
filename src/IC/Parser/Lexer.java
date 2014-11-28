@@ -701,7 +701,7 @@ public class Lexer implements java_cup.runtime.Scanner {
           }
         case 58: break;
         case 3: 
-          { return symbol(sym.DEVIDE, yytext());
+          { return symbol(sym.DIVIDE, yytext());
           }
         case 59: break;
         case 4: 

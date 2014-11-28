@@ -22,21 +22,30 @@ terminal Integer    INTEGER_LITERAL;
 
 // Operators and signs
 terminal			LP, RP, LC, RC, LB, RB, DOT, EXCLAMATION_MARK, PLUS, MINUS, MULT,
-					DEVIDE, REMINDER, SMALLER_OP, LARGER_OP, SMALLER_EQ_OP, LARGER_EQ_OP,
+					DIVIDE, REMINDER, SMALLER_OP, LARGER_OP, SMALLER_EQ_OP, LARGER_EQ_OP,
 					EQUALS_OP, NOT_EQUALS_OP, AND_OP, OR_OP, ASSIGN;
 
 
+// Context terminals
+terminal UMINUS;
+
 /* Non terminals */
 non terminal            program, classDecl_list, classDecl, classLines_list, type, method_type, 
-						class_id, expr_list, expr_part, method, field, extra_fields,
-						formals, extra_formals, stmnt, stmnt_list, call,
-						staticCall, virtualCall, extra_exprs, location, binop, unop, literal;
+						method, field, extra_fields, formals, extra_formals,
+						stmnt, stmnt_list, elseStmn, call, staticCall, virtualCall,
+						extra_exprs, location, binop, unop, literal;
 non terminal Integer    expr;
 
 /* Precedences */
-/* precedence left PLUS, MINUS; */
-/* precedence left TIMES, DIVIDE, MOD; */
-/* precedence left UMINUS; */
+precedence left ELSE_KEYWORD;
+precedence left DOT;
+precedence left SMALLER_OP, LARGER_OP, SMALLER_EQ_OP, LARGER_EQ_OP, 
+				EQUALS_OP, NOT_EQUALS_OP, AND_OP, OR_OP;
+precedence left PLUS, MINUS;
+precedence left MULT, DIVIDE, REMINDER; 
+precedence left ID;
+precedence left UMINUS;
+precedence left LC, LP;
 
 /* The grammar */
 program ::= classDecl_list;
@@ -66,12 +75,13 @@ method_type ::= type | VOID_KEYWORD;
 stmnt_list ::= stmnt stmnt_list  | ; 
 
 stmnt ::= 	location ASSIGN expr SEMICOLON | call SEMICOLON | RETURN_KEYWORD SEMICOLON |
-			RETURN_KEYWORD expr SEMICOLON | IF_KEYWORD LP expr RP stmnt | 
-			IF_KEYWORD LP expr RP stmnt ELSE_KEYWORD stmnt | WHILE_KEYWORD LP expr RP stmnt |
-			BREAK_KEYWORD SEMICOLON | CONTINUE_KEYWORD SEMICOLON | LB stmnt_list RB |
-			type ID SEMICOLON | type ID ASSIGN expr SEMICOLON;
+			RETURN_KEYWORD expr SEMICOLON | IF_KEYWORD LP expr RP stmnt elseStmn | 
+			WHILE_KEYWORD LP expr RP stmnt | BREAK_KEYWORD SEMICOLON | CONTINUE_KEYWORD SEMICOLON |
+			LB stmnt_list RB | type ID SEMICOLON | type ID ASSIGN expr SEMICOLON;
+
+elseStmn ::= ELSE_KEYWORD stmnt | ;
 			
-expr ::=	location | call | THIS_KEYWORD | NEW_KEYWORD CLASS_ID LP RP | NEW_KEYWORD type LC RC |
+expr ::=	location | call | THIS_KEYWORD | NEW_KEYWORD CLASS_ID LP RP | NEW_KEYWORD type LC expr RC |
 			expr DOT LENGTH_KEYWORD | expr binop expr | unop expr | literal | LP expr RP;
 	
 call ::=	staticCall | virtualCall;
@@ -84,10 +94,10 @@ extra_exprs ::=	COMMA expr extra_exprs | ;
 
 location ::= ID | expr DOT ID | expr LC expr RC;
 
-binop ::= 	PLUS | MINUS | MULT | DEVIDE | REMINDER | SMALLER_OP |
+binop ::= 	PLUS | MINUS | MULT | DIVIDE | REMINDER | SMALLER_OP |
 			LARGER_OP | SMALLER_EQ_OP | LARGER_EQ_OP | EQUALS_OP | 
 			NOT_EQUALS_OP | AND_OP | OR_OP;
 			
-unop ::=	MINUS | EXCLAMATION_MARK;
+unop ::=	MINUS %prec UMINUS | EXCLAMATION_MARK;
 
 literal ::= INTEGER_LITERAL | STRING_LITERAL | TRUE_LITERAL | FALSE_LITERAL | NULL_LITERAL;
