@@ -4,7 +4,9 @@ import java_cup.runtime.*;
 import IC.AST.*;
 
 /* Preliminaries to set up and use the scanner.  */
-init with {: scanner.init();              :};
+init with {: 
+	scanner.init();
+	:};
 scan with {: return scanner.next_token(); :};
 
 /* Terminals (tokens returned by the scanner). */
@@ -31,7 +33,7 @@ terminal UMINUS;
 
 /* Non terminals */
 non terminal            program, classDecl_list, classDecl, classLines_list, type, method_type, 
-						method, field, extra_fields, formals, extra_formals,
+						method, field, extra_fields, params, extra_params,
 						stmnt, stmnt_list, elseStmn, call, staticCall, virtualCall,
 						extra_exprs, location, binop, unop, literal;
 non terminal Integer    expr;
@@ -50,54 +52,223 @@ precedence left LC, LP;
 /* The grammar */
 program ::= classDecl_list;
 
-classDecl ::= CLASS_KEYWORD CLASS_ID EXTENDS_KEYWORD CLASS_ID LB classLines_list RB
-			| CLASS_KEYWORD CLASS_ID LB classLines_list RB; 
-			
 classDecl_list ::= classDecl classDecl_list | ;
+
+classDecl ::= CLASS_KEYWORD CLASS_ID EXTENDS_KEYWORD CLASS_ID:c LB classLines_list RB
+				{: System.out.println("Declaration of class: " + c); :} 
+			| CLASS_KEYWORD CLASS_ID:c LB classLines_list RB
+				{: System.out.println("Declaration of class: " + c); :} ;
+				
+
 
 classLines_list ::= method classLines_list | field classLines_list | ;
 
-field ::= type ID extra_fields;
+field ::= type ID:f extra_fields
+				{: System.out.println("Declaration of field: " + f); :} ;
 
 extra_fields ::= COMMA ID extra_fields | SEMICOLON;
 
-method ::= STATIC_KEYWORD method_type ID LP formals RP LB stmnt_list RB 
-			| method_type ID LP formals RP LB stmnt_list RB; 
+method ::= STATIC_KEYWORD method_type ID:m LP params RP LB stmnt_list RB 
+			{:
+				System.out.println("Declaration of static method: " + m);
+			:}
+			| method_type ID:m LP params RP LB stmnt_list RB
+			{:
+				System.out.println("Declaration of virtual method: " + m);
+			:} ; 
 
-formals ::= type ID extra_formals | ;
+params ::= type ID:p extra_params 
+			{:
+				System.out.println("Parameter: " + p);
+			:} | ;
 
-extra_formals ::= COMMA type ID extra_formals | ;
+extra_params ::= COMMA type ID:p extra_params
+ 			{:
+				System.out.println("Parameter: " + p);
+			:} | ;
 
-type ::= INT_KEYWORD | BOOLEAN_KEYWORD | STRING_KEYWORD | CLASS_ID | type LC RC;
-		
-method_type ::= type | VOID_KEYWORD;
+type ::= INT_KEYWORD:pt 
+		 {:
+		 	if (parserAssistingVarables.arrayDimentionCounter == 0)
+		 		System.out.println("Primitive data type: " + pt);
+		 	else {
+		 		System.out.println("Primitive data type: " + parserAssistingVarables.arrayDimentionCounter + "-dimensional array of " + pt);
+		 		parserAssistingVarables.arrayDimentionCounter = 0;
+		 	}
+		 :} |
+		 BOOLEAN_KEYWORD:pt 
+		 {:
+		 	if (parserAssistingVarables.arrayDimentionCounter == 0)
+		 		System.out.println("Primitive data type: " + pt);
+		 	else {
+		 		System.out.println("Primitive data type: " + parserAssistingVarables.arrayDimentionCounter + "-dimensional array of " + pt);
+		 		parserAssistingVarables.arrayDimentionCounter = 0;
+		 	}
+		 :} |
+		 STRING_KEYWORD:pt
+		 {:
+		 	if (parserAssistingVarables.arrayDimentionCounter == 0)
+		 		System.out.println("Primitive data type: " + pt);
+		 	else {
+		 		System.out.println("Primitive data type: " + parserAssistingVarables.arrayDimentionCounter + "-dimensional array of " + pt);
+		 		parserAssistingVarables.arrayDimentionCounter = 0;
+		 	}
+		 :} |
+		 CLASS_ID:ct
+		 {:
+		 	System.out.println("User-defined data type: " + ct);
+		 :} |
+		 type LC RC
+		 {:
+		 	parserAssistingVarables.arrayDimentionCounter++;
+		 :} ;
+method_type ::= type |
+				VOID_KEYWORD
+				{:
+					System.out.println("Primitive data type: void");
+				:} ;
 			
 stmnt_list ::= stmnt stmnt_list  | ; 
 
-stmnt ::= 	location ASSIGN expr SEMICOLON | call SEMICOLON | RETURN_KEYWORD SEMICOLON |
-			RETURN_KEYWORD expr SEMICOLON | IF_KEYWORD LP expr RP stmnt elseStmn | 
-			WHILE_KEYWORD LP expr RP stmnt | BREAK_KEYWORD SEMICOLON | CONTINUE_KEYWORD SEMICOLON |
-			LB stmnt_list RB | type ID SEMICOLON | type ID ASSIGN expr SEMICOLON;
+stmnt ::= 	location ASSIGN expr SEMICOLON 
+			{:
+				System.out.println("Assignment statement");
+			:} |
+			call SEMICOLON
+			{:
+				System.out.println("Method call statement");
+			:} | RETURN_KEYWORD SEMICOLON |
+			RETURN_KEYWORD expr SEMICOLON
+			{:
+				System.out.println("Return statement, with return value");
+			:} | 
+			IF_KEYWORD LP expr RP stmnt elseStmn
+			{:
+				System.out.println("If statement");
+			:} | 
+			WHILE_KEYWORD LP expr RP stmnt 
+			{:
+				System.out.println("While statement");
+			:} | 
+			BREAK_KEYWORD SEMICOLON
+			{:
+				System.out.println("Break statement");
+			:} | CONTINUE_KEYWORD SEMICOLON |
+			LB stmnt_list RB 
+			{:
+				System.out.println("Block of statements");
+			:} | type ID SEMICOLON | 
+			type ID:v ASSIGN expr SEMICOLON
+			{:
+				System.out.println("Declaration of local variable: " + v + ", with initial value");
+			:} ;
 
 elseStmn ::= ELSE_KEYWORD stmnt | ;
 			
-expr ::=	location | call | THIS_KEYWORD | NEW_KEYWORD CLASS_ID LP RP | NEW_KEYWORD type LC expr RC |
-			expr DOT LENGTH_KEYWORD | expr binop expr | unop expr | literal | LP expr RP;
+expr ::=	location | call | THIS_KEYWORD |
+			NEW_KEYWORD CLASS_ID:c LP RP
+			{:
+				System.out.println("Instantiation of class: " + c);
+			:} |
+			NEW_KEYWORD type LC expr RC
+			{:
+				System.out.println("Array allocation");
+			:} |
+			expr DOT LENGTH_KEYWORD
+			{:
+				System.out.println("Reference to array length");
+			:} | expr binop expr | unop expr | literal | LP expr RP;
 	
 call ::=	staticCall | virtualCall;
 
-staticCall ::= CLASS_ID DOT ID LP RP | CLASS_ID DOT ID LP expr extra_exprs RP;
+staticCall ::= 	CLASS_ID:c DOT:m ID LP RP
+				{:
+					System.out.println("Call to static method: " + m + ", in class " + c);
+				:} |
+				CLASS_ID:c DOT ID:m LP expr extra_exprs RP
+				{:
+					System.out.println("Call to static method: " + m + ", in class " + c);
+				:} ;
 
-virtualCall ::= expr DOT ID LP expr extra_exprs RP | ID LP expr extra_exprs RP;
+virtualCall ::= expr DOT ID:m LP RP
+				{:
+					System.out.println("Call to virtual method: " + m + ", in external scope");
+				:} | 
+				ID:m LP RP
+				{:
+					System.out.println("Call to virtual method: " + m);
+				:} |
+				expr DOT ID:m LP expr extra_exprs RP
+				{:
+					System.out.println("Call to virtual method: " + m + ", in external scope");
+				:} | 
+				ID:m LP expr extra_exprs RP
+				{:
+					System.out.println("Call to virtual method: " + m);
+				:} ;
 
 extra_exprs ::=	COMMA expr extra_exprs | ;
 
-location ::= ID | expr DOT ID | expr LC expr RC;
+location ::= ID:v
+			 {:
+			 	System.out.println("Reference to variable: " + v);
+			 :} |
+			 expr DOT ID:v
+			 {:
+			 	System.out.println("Reference to variable: " + v + ", in external scope");
+			 :} | 
+			 expr LC expr RC
+			 {:
+			 	System.out.println("Reference to array");
+			 :} ;
 
-binop ::= 	PLUS | MINUS | MULT | DIVIDE | REMINDER | SMALLER_OP |
-			LARGER_OP | SMALLER_EQ_OP | LARGER_EQ_OP | EQUALS_OP | 
-			NOT_EQUALS_OP | AND_OP | OR_OP;
+binop ::= 	PLUS 
+			{:
+				System.out.println("Mathematical binary operation: addition");
+			:} |
+			MINUS
+			{:
+				System.out.println("Mathematical binary operation: subtraction");
+			:} |
+			MULT
+			{:
+				System.out.println("Mathematical binary operation: multiplication");
+			:} | DIVIDE | REMINDER | SMALLER_OP
+			{:
+				System.out.println("Logical binary operation: less than");
+			:} |
+			LARGER_OP 
+			{:
+				System.out.println("Logical binary operation: greater than");
+			:} |
+			SMALLER_EQ_OP
+			{:
+				System.out.println("Logical binary operation: less than or equal to");
+			:} |
+			LARGER_EQ_OP
+			{:
+				System.out.println("Logical binary operation: greater than or equal to");
+			:} | EQUALS_OP | 
+			NOT_EQUALS_OP
+			{:
+				System.out.println("Logical binary operation: inequality");
+			:} | AND_OP | OR_OP;
 			
 unop ::=	MINUS %prec UMINUS | EXCLAMATION_MARK;
 
-literal ::= INTEGER_LITERAL | STRING_LITERAL | TRUE_LITERAL | FALSE_LITERAL | NULL_LITERAL;
+literal ::= INTEGER_LITERAL:n
+			{:
+				System.out.println("Integer literal: " + n);
+			:} |
+			STRING_LITERAL:s
+			{:
+				System.out.println("String literal: " + s);
+			:} |
+			TRUE_LITERAL:t
+			{:
+				System.out.println("Boolean literal: " + t);
+			:} |
+			FALSE_LITERAL:t
+			{:
+				System.out.println("Boolean literal: " + t);
+			:} | NULL_LITERAL;
