@@ -35,6 +35,8 @@ program ::= classDecl:c
 			{: List<ICClass> cl = new ArrayList<ICClass>(c); RESULT = new Program(cl); :}
 			| program:p classDecl:c
 			{: p.getClasses().add(c); RESULT = p; :}
+			|
+			{: RESULT = new Program(new ArrayList<ICClass>(); :}
 ;
 
 
@@ -50,6 +52,8 @@ method_list ::= method:m
 		{: RESULT = new ArrayList<Method>(m); :}
 		| method_list:ml method:m 
 		{: ml.add(m); RESULT = ml; :}
+		|
+		{: RESULT = new ArrayList<Method>(); :}
 ;	
 	
 method ::= STATIC_KEYWORD method_type:t ID LP formal_list:fl RP SEMICOLON /* LB stmnt_list RB */
@@ -80,6 +84,8 @@ formal_list ::= formal:f
 		{: RESULT = new ArrayList<Formal>(f); :}
 		| formal_list:fl COMMA formal:f
 		{: fl.add(f); RESULT = fl; :}
+		|
+		{: RESULT = new ArrayList<Formal>(); :}
 ;
 
 formal ::= type:t ID:id
