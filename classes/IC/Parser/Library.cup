@@ -23,6 +23,7 @@ non terminal List<Formal> formal_list;
 non terminal Method method;
 non terminal List<Method> method_list;
 non terminal ICClass classDecl;
+non terminal List<ICCLass> classDecl_list;
 non terminal Program program;
 non terminal Integer    expr, term, factor;
 
@@ -32,14 +33,17 @@ precedence left TIMES, DIVIDE, MOD;
 precedence left UMINUS;
 
 /* The grammar */
-program ::= classDecl:c
-			{: List<ICClass> cl = new ArrayList<ICClass>(c); RESULT = new Program(cl); :}
-			| program:p classDecl:c
-			{: p.getClasses().add(c); RESULT = p; :}
-			|
-			{: RESULT = new Program(new ArrayList<ICClass>(); :}
+program ::= classDecl_list:cl
+			{: RESULT = new Program(cl); :}
 ;
 
+classDecl_list ::= classDecl:c
+			{: RESULT = new ArrayList<ICCLass>(c); :}
+			| classDecl_list:cl classDecl:c
+			{: cl.add(c); RESULT = cl; :}
+			|
+			{: RESULT = new ArrayList<ICClass>(); :}
+;
 
 classDecl ::= CLASS_KEYWORD CLASS_ID:cid EXTENDS_KEYWORD CLASS_ID:cex LB method_list:ml RB
 			{: RESULT = new ICClass(cid.getLine(), (String)cid.getValue() , (String)cex.getValue(), null, /* SHOULDNT BE NULL IN IC.cup */
