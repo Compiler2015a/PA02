@@ -27,6 +27,17 @@ parser code  {:
 		super(lexer);
 		this.lexer = lexer;
 	}
+	
+	protected class ClassLines
+	{
+		public ClassLines() 
+		{
+			methods = new ArrayList<Method>(); 
+			new ArrayList<Field>();
+		}
+		public List<Method> methods;
+		public List<Field> fields;
+	} 
 :}
 
 scan with 
@@ -58,11 +69,28 @@ terminal			LP, RP, LC, RC, LB, RB, DOT, EXCLAMATION_MARK, PLUS, MINUS, MULT,
 terminal UMINUS;
 
 /* Non terminals */
-non terminal            program, icClass_list, icClass, classLines_list, type, method_type, 
-						method, fields, extra_fields, formal, formal_list,
-						stmnt, stmnt_list, elseStmn, call, staticCall, virtualCall,
-						extra_exprs, location, binop, unop, literal;
-non terminal Integer    expr;
+non terminal Type type, method_type;
+non terminal Formal formal;
+non terminal List<Formal> formal_list;
+non terminal Method method;
+non terminal ICClass icClass;
+non terminal List<ICClass> icClass_list;
+non terminal ClassLines classLines_list;
+non terminal Program program;
+non terminal List<Field> fields;
+non terminal List<String> extra_fields;
+non terminal Statement stmnt;
+non terminal List<Statement> stmnt_list; 
+non terminal Call call;
+non terminal Location location;
+non terminal Statement elseStmn;
+non terminal IC.UnaryOps unop;
+non terminal IC.BinaryOps binop;
+non terminal Literal literal;
+non terminal            
+						staticCall, virtualCall,
+						extra_exprs;
+non terminal Expression expr;
 
 /* Precedences */
 precedence left ELSE_KEYWORD;
@@ -77,53 +105,46 @@ precedence left LC, LP;
 
 /* The grammar */
 program ::= icClass_list:icCl
-			{: RESULT = new Program((List<ICClass>)icCl); :}
+			{: RESULT = new Program(icCl); :}
 ;
 
 icClass_list ::= icClass_list:icCl icClass:icC
-				 {: ((List<ICClass>)icCl).add((ICClass)icC); RESULT = classes; :}
+				 {: icCl.add(icC); RESULT = icCl; :}
   				 |
   				 {: RESULT = new ArrayList<ICClass>(); :}
 ;
 
 icClass ::= CLASS_KEYWORD:class_key CLASS_ID:cName EXTENDS_KEYWORD CLASS_ID:superCName LB classLines_list:clines RB
 			{: RESULT = new ICClass(getLineFromToken(class_key), getValueFromToken(cName), 
-									getValueFromToken(superCName), ((ClassLines)clines).fields, ((ClassLines)clines).methods); :} 
-			| CLASS_KEYWORD CLASS_ID:c LB classLines_list RB
+									getValueFromToken(superCName), clines.fields, clines.methods); :} 
+			| CLASS_KEYWORD:class_key CLASS_ID:cName LB classLines_list:clines RB
 			{: RESULT = new ICClass(getLineFromToken(class_key), getValueFromToken(cName), 
-									null, ((ClassLines)clines).fields, ((ClassLines)clines).methods); :}
-				
+									null, clines.fields, clines.methods); :}
+;				
 
 
 classLines_list ::= classLines_list:clines method:m
-					{: ((ClassLines)clines).methods.add((Method)m); RESULT = clines; :}
+					{: clines.methods.add(m); RESULT = clines; :}
 					| classLines_list:clines fields:fl
-					{: ((ClassLines)clines).fields.addll((List<Field>)fl); RESULT = clines; :}
+					{: clines.fields.addAll(fl); RESULT = clines; :}
 					| 
-					{: RESULT = new ClassLines()
-						{
-							public List<Method> methods = new ArrayList<Method>();
-							public List<Field> fields = new ArrayList<Field>();
-						} 
-					:}
+					{: RESULT = new ClassLines(); :}
 ;
 
 fields ::=  type:t ID:fName extra_fields:fNamesl
 			{: 
-				List<String> fields_names_list = (List<String>)fNamesl;
-				fields_names_list.add(0, getValueFromToken(fName));
-				fields_list = new ArrayList<Field>();
-				for (int i = 0; i < fields_names_list.size(); i++)
-					fields_list.add(new Field((type)t, fields_names_list.get(i))); 
+				fNamesl.add(0, getValueFromToken(fName));
+				List<Field> fields_list = new ArrayList<Field>();
+				for (int i = 0; i < fNamesl.size(); i++)
+					fields_list.add(new Field(t, fNamesl.get(i))); 
 				RESULT = fields_list; 
 			:}
 ;
 
 extra_fields ::= COMMA ID:fName extra_fields:fNamesl
 				 {: 
-				 	List<String> fields_names_list = (List<Field>)fNamesl;
-				 	fields_names_list.add(0, getValueFromToken(fName));
-				 	RESULT = fields_names_list;
+				 	fNamesl.add(0, getValueFromToken(fName));
+				 	RESULT = fNamesl;
 				 :}
  				| SEMICOLON
  				{: RESULT = new ArrayList<String>(); :}
@@ -136,7 +157,8 @@ method ::= STATIC_KEYWORD method_type ID:m LP formal_list RP LB stmnt_list RB
 			| method_type ID:m LP formal_list RP LB stmnt_list RB
 			{:
 				System.out.println("Declaration of virtual method: " + m);
-			:} ; 
+			:} 
+; 
 
 formal_list ::= 
 		formal_list:fl COMMA formal:f
@@ -149,78 +171,69 @@ formal ::= type:t ID:formalName
 		{: RESULT = new Formal((Type)t, getValueFromToken(formalName)); :}
 ;
 
-type ::= INT_KEYWORD:intKey
-		{: RESULT = new PrimitiveType(getLineFromToken(intKey), DataTypes.INT); :}
-		| BOOLEAN_KEYWORD:boolKey
-		{: RESULT = new PrimitiveType(getLineFromToken(boolKey), DataTypes.BOOLEAN); :}
-		| STRING_KEYWORD:strKey
-		{: RESULT = new PrimitiveType(getLineFromToken(strKey), DataTypes.STRING); :}
-		| CLASS_ID:c
-		{: RESULT = new UserType(getLineFromToken(c), getValueFromToken(c)); :}
-		| type:t LC RC
-		{: RESULT = ((Type)t).incrementDimension(); :}
-;
-
 method_type ::= VOID_KEYWORD:v
-		{: RESULT = new PrimitiveType(getLineFromToken(v), DataTypes.VOID); :}
+		{: RESULT = new PrimitiveType(getLineFromToken(v), IC.DataTypes.VOID); :}
 		| type:t
 		{: RESULT = t; :}
 ;
+
+type ::= type:t LC RC
+		{: t.incrementDimension(); RESULT = t; :}
+		| INT_KEYWORD:intKey
+		{: RESULT = new PrimitiveType(getLineFromToken(intKey), IC.DataTypes.INT); :}
+		| BOOLEAN_KEYWORD:boolKey
+		{: RESULT = new PrimitiveType(getLineFromToken(boolKey), IC.DataTypes.BOOLEAN); :}
+		| STRING_KEYWORD:strKey
+		{: RESULT = new PrimitiveType(getLineFromToken(strKey), IC.DataTypes.STRING); :}
+		| CLASS_ID:c
+		{: RESULT = new UserType(getLineFromToken(c), getValueFromToken(c)); :}
+;
 			
 stmnt_list ::= stmnt_list:sl stmnt:s
-	 	{: ((List<Statement>)sl).add((Statement)s); RESULT = sl; :}
+	 	{: sl.add(s); RESULT = sl; :}
 		| 
 		{: RESULT = new ArrayList<Statement>(); :}
 ; 
 
-stmnt ::= 	location:l ASSIGN expr SEMICOLON 
-			{:
-				RESULT = new Location(l.getLine()); 
-			:} |
+stmnt ::= 	location:l ASSIGN expr:exp SEMICOLON 
+			{: RESULT = new Assignment(l, exp); :} |
 			call:c SEMICOLON
-			{:
-				RESULT = new CallStatement(c);
-			:} | RETURN_KEYWORD SEMICOLON |
-			RETURN_KEYWORD expr SEMICOLON
-			{:
-				System.out.println("Return statement, with return value");
-			:} | 
-			IF_KEYWORD LP expr RP stmnt elseStmn
-			{:
-				System.out.println("If statement");
-			:} | 
-			WHILE_KEYWORD LP expr RP stmnt 
-			{:
-				System.out.println("While statement");
-			:} | 
-			BREAK_KEYWORD SEMICOLON
-			{:
-				System.out.println("Break statement");
-			:} | CONTINUE_KEYWORD SEMICOLON |
-			LB stmnt_list RB 
-			{:
-				System.out.println("Block of statements");
-			:} | type ID SEMICOLON | 
-			type ID:v ASSIGN expr SEMICOLON
-			{:
-				System.out.println("Declaration of local variable: " + v + ", with initial value");
-			:} ;
+			{: RESULT = new CallStatement(c); :} |
+			RETURN_KEYWORD:ret_key SEMICOLON
+			{: RESULT = new Return(getLineFromToken(ret_key), null); :} |
+			RETURN_KEYWORD:ret_key expr:exp SEMICOLON
+			{: RESULT = new Return(getLineFromToken(ret_key), exp); :} |
+			IF_KEYWORD LP expr:condExp RP stmnt:doStmn elseStmn:eStmn
+			{: RESULT = new If(condExp, doStmn, eStmn); :} |
+			WHILE_KEYWORD LP expr:condExp RP stmnt:doStmn 
+			{: RESULT = new If(condExp, doStmn); :} |
+			BREAK_KEYWORD:break_key SEMICOLON
+			{: RESULT = new Break(getLineFromToken(break_key)); :} |
+			CONTINUE_KEYWORD:continue_key SEMICOLON
+			{: RESULT = new Continue(getLineFromToken(continue_key)); :} |
+			LB:lb stmnt_list:sl RB 
+			{: RESULT = new StatementsBlock(getLineFromToken(lb), sl); :} |
+			type:t ID:vName ASSIGN expr:exp SEMICOLON
+			{: RESULT = new LocalVariable(t, getValueFromToken(vName), exp); :}
+;
 
-elseStmn ::= ELSE_KEYWORD stmnt | ;
+elseStmn ::= ELSE_KEYWORD stmnt:s {: RESULT = s; :} | {: RESULT = null; :} ;
 			
-expr ::=	location | call | THIS_KEYWORD |
-			NEW_KEYWORD CLASS_ID:c LP RP
-			{:
-				System.out.println("Instantiation of class: " + c);
-			:} |
-			NEW_KEYWORD type LC expr RC
-			{:
-				System.out.println("Array allocation");
-			:} |
-			expr DOT LENGTH_KEYWORD
-			{:
-				System.out.println("Reference to array length");
-			:} | expr binop expr | unop expr | literal | LP expr RP;
+expr ::=	location:l {: RESULT = l; :} | call:c {: RESULT = c; :} | 
+			THIS_KEYWORD:ths_key
+			{: RESULT = new This(getLineFromToken(ths_key)); :} |
+			NEW_KEYWORD:n_key CLASS_ID:c LP RP
+			{: RESULT = new NewClass(getLineFromToken(n_key), getValueFromToken(c)); :} |
+			NEW_KEYWORD type:t LC expr:exp RC
+			{: RESULT = new NewArray(t, exp); :} |
+			expr:exp DOT LENGTH_KEYWORD
+			{: RESULT = new Length(exp); :} | 
+			expr:exp1 binop:bOp expr:exp2
+			{: RESULT = new LogicalBinaryOp(exp1, bOp, exp2); :} | 
+			unop:uOp expr:exp
+			{: RESULT = new LogicalUnaryOp(uOp, exp); :} | 
+			literal:l {: RESULT = l; :} | LP expr:exp RP {: RESULT = exp; :}
+;
 	
 call ::=	staticCall | virtualCall;
 
