@@ -15,7 +15,7 @@ parser code  {:
 	private Lexer lexer;
 	private int arrayDimentionCounter = 0;
 	
-	private String getValueFromToken(Object obj) {
+	private String getStringValueFromToken(Object obj) {
 		Token token = (Token)obj;
 		return token.getValue().toString();
 	}
@@ -41,25 +41,18 @@ scan with {:
 terminal			VOID_KEYWORD, INT_KEYWORD, BOOLEAN_KEYWORD, STRING_KEYWORD;
 terminal			ID;
 terminal			CLASS_KEYWORD, CLASS_ID, EXTENDS_KEYWORD, STATIC_KEYWORD;
-terminal            SEMI, PLUS, MINUS, TIMES, DIVIDE, MOD;
-terminal            UMINUS, LP, RP, LB, RB, LC, RC, COMMA, SEMICOLON;
-terminal Integer    NUMBER;
+terminal            LP, RP, LB, RB, LC, RC, COMMA, SEMICOLON;
 
 /* Non terminals */
 non terminal Type type, method_type;
+non terminal List<Formal> formal_list, extra_formals;
 non terminal Formal formal;
-non terminal List<Formal> formal_list;
 non terminal Method method;
 non terminal List<Method> method_list;
 non terminal ICClass classDecl;
 non terminal List<ICClass> classDecl_list;
 non terminal Program program;
 /* non terminal Integer    expr, term, factor; */
-
-/* Precedences */
-precedence left PLUS, MINUS;
-precedence left TIMES, DIVIDE, MOD;
-precedence left UMINUS;
 
 /* The grammar */
 program ::= classDecl_list:cl
@@ -73,10 +66,10 @@ classDecl_list ::= classDecl:c
 ;
 
 classDecl ::= CLASS_KEYWORD CLASS_ID:cid EXTENDS_KEYWORD CLASS_ID:cex LB method_list:ml RB
-			{: RESULT = new ICClass(getLineFromToken(cid), getValueFromToken(cid) , getValueFromToken(cex), null, /* SHOULDNT BE NULL IN IC.cup */
+			{: RESULT = new ICClass(getLineFromToken(cid), getStringValueFromToken(cid) , getStringValueFromToken(cex), null, /* SHOULDNT BE NULL IN IC.cup */
 			ml); :}
 			| CLASS_KEYWORD CLASS_ID:cid LB method_list:ml RB /*Library has no need for (field|method)* */
-			{: RESULT = new ICClass(getLineFromToken(cid), getValueFromToken(cid) , null, /* SHOULDNT BE NULL IN IC.cup */
+			{: RESULT = new ICClass(getLineFromToken(cid), getStringValueFromToken(cid) , null, /* SHOULDNT BE NULL IN IC.cup */
 			ml); :}
 ; 
 			
@@ -87,9 +80,9 @@ method_list ::= method:m
 ;	
 	
 method ::= STATIC_KEYWORD method_type:t ID:id LP formal_list:fl RP SEMICOLON /* LB stmnt_list RB */
-			{: RESULT = new StaticMethod(t, getValueFromToken(id), fl, null); :} /* statement list not null in IC.cup */
+			{: RESULT = new StaticMethod(t, getStringValueFromToken(id), fl, null); :} /* statement list not null in IC.cup */
 			| method_type:t ID:id LP formal_list:fl RP SEMICOLON /* LB stmnt_list RB; */
-			{: RESULT = new LibraryMethod(t, getValueFromToken(id), fl); :} /* statement list not null in IC.cup */
+			{: RESULT = new LibraryMethod(t, getStringValueFromToken(id), fl); :} /* statement list not null in IC.cup */
 ;
 			
 method_type ::= VOID_KEYWORD:v
@@ -107,19 +100,23 @@ type ::= type:t LC RC
 		| STRING_KEYWORD:strKey
 		{: RESULT = new PrimitiveType(getLineFromToken(strKey), IC.DataTypes.STRING); :}
 		| CLASS_ID:c
-		{: RESULT = new UserType(getLineFromToken(c), getValueFromToken(c)); :}
+		{: RESULT = new UserType(getLineFromToken(c), getStringValueFromToken(c)); :}
 ;
 	
-formal_list ::= formal:f
-		{: List<Formal> list = new ArrayList<Formal>(); list.add(f); RESULT = list; :}
-		| formal_list:fl COMMA formal:f
-		{: fl.add(f); RESULT = fl; :}
-		|
-		{: RESULT = new ArrayList<Formal>(); :}
+formal_list ::= formal:f extra_formals:ef 
+				{: ef.add(0, f); RESULT = ef; :} 
+				| 
+				{: RESULT = new ArrayList<Formal>(); :}
 ;
 
-formal ::= type:t ID:id
-		{: RESULT = new Formal(t, getValueFromToken(id)); :}
+extra_formals ::= COMMA formal:f extra_formals:ef
+				 {: ef.add(0, f); RESULT = ef; :} 
+				 | 
+				 {: RESULT = new ArrayList<Formal>(); :}
+;
+
+formal ::= type:t ID:fName
+		{: RESULT = new Formal(t, getStringValueFromToken(fName)); :}
 ;
 	
 /* stmnt_list ::= stmnt_list stmnt | stmnt; */
