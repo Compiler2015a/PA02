@@ -38,8 +38,8 @@ Lowercase = [a-z]
 Uppercase = [A-Z]
 Letters = [A-Za-z] 
 
-ClassIdentifier = {Uppercase}({Letters} | {DecIntegerLiteral})*
-Identifier = {Lowercase}({Letters} | {DecIntegerLiteral})*
+ClassIdentifier = {Uppercase}({Letters} | {DecIntegerLiteral} | _)*
+Identifier = {Lowercase}({Letters} | {DecIntegerLiteral} | _)*
 
 DecIntegerLiteral = 0 | [1-9][0-9]*
 %state STRING
@@ -119,12 +119,14 @@ DecIntegerLiteral = 0 | [1-9][0-9]*
                                    return stringSymbol(sym.STRING_LITERAL, 
                                    string.toString()); }
   [^\n\r\"\\]+                   { string.append( yytext() ); }
-  \\t                            { string.append('\t'); }
+  \\t                            { string.append("\\t"); }
   \\n                            { string.append("\\n"); }
 
-  \\r                            { string.append('\r'); }
+  \\r                            { string.append("\\r"); }
   \\\"                           { string.append("\\\""); }
   \\                             { string.append('\\'); }
+  
+  \n							 { throw new LexicalError(yytext(), yyline+1, yycolumn+1); } /* unclosed literal string */ 
 }
 
 

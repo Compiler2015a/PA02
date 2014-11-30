@@ -16,9 +16,13 @@ terminal            UMINUS, LP, RP, LB, RB, LC, RC, COMMA, SEMICOLON;
 terminal Integer    NUMBER;
 
 /* Non terminals */
-non terminal            classDecl_list, classDecl, class_keyword, type, method_type, class_id,
-						expr_list, expr_part, method, method_list, /* stmnt, stmnt_list, */
-						formal, formal_list;
+non terminal Type type, method_type;
+non terminal Formal formal;
+non terminal List<Formal> formal_list;
+non terminal Method method;
+non terminal List<Method> method_list;
+non terminal ICClass classDecl;
+non terminal Program program;
 non terminal Integer    expr, term, factor;
 
 /* Precedences */
@@ -27,25 +31,59 @@ precedence left TIMES, DIVIDE, MOD;
 precedence left UMINUS;
 
 /* The grammar */
-program ::= classDecl_list;
+program ::= classDecl:c
+			{: List<ICClass> cl = new ArrayList<ICClass>(c); RESULT = new Program(cl); :}
+			| program:p classDecl:c
+			{: p.getClasses().add(c); RESULT = p; :}
+;
 
-classDecl ::= CLASS_KEYWORD CLASS_ID EXTENDS_KEYWORD CLASS_ID LB method_list RB
-			| CLASS_KEYWORD CLASS_ID LB method_list RB; /*Library has no need for (field|method)* */
+
+classDecl ::= CLASS_KEYWORD CLASS_ID:cid EXTENDS_KEYWORD CLASS_ID:cex LB method_list:ml RB
+			{: RESULT = new ICClass(cid.getLine(), (String)cid.getValue() , (String)cex.getValue(), null, /* SHOULDNT BE NULL IN IC.cup */
+			ml); :}
+			| CLASS_KEYWORD CLASS_ID LB method_list:ml RB /*Library has no need for (field|method)* */
+			{: RESULT = new ICClass(cid.getLine(), (String)cid.getValue() , null, /* SHOULDNT BE NULL IN IC.cup */
+			ml); :}
+; 
 			
-classDecl_list ::= classDecl classDecl_list | ;
+method_list ::= method:m
+		{: RESULT = new ArrayList<Method>(m); :}
+		| method_list:ml method:m 
+		{: ml.add(m); RESULT = ml; :}
+;	
+	
+method ::= STATIC_KEYWORD method_type:t ID LP formal_list:fl RP SEMICOLON /* LB stmnt_list RB */
+			{: RESULT = new StaticMethod(t, (String)ID.getValue(), fl, null); :} /* statement list not null in IC.cup */
+			| method_type:t ID LP formal_list:fl RP SEMICOLON /* LB stmnt_list RB; */
+			{: RESULT = new Method(t, (String)ID.getValue(), fl, null); :} /* statement list not null in IC.cup */
+;
 			
-method ::= STATIC_KEYWORD method_type ID LP formal_list RP SEMICOLON /* LB stmnt_list RB */
-			| method_type ID LP formal_list RP SEMICOLON; /* LB stmnt_list RB; */
+method_type ::= VOID_KEYWORD:v
+		{: RESULT = new PrimitiveType(v.getLine(), DataTypes.VOID); :}
+		| type:t
+		{: RESULT = t; :}
+;
 			
-method_list ::= method_list method | method;
-			
-type ::= INT_KEYWORD | BOOLEAN_KEYWORD | STRING_KEYWORD
-		| CLASS_ID | type LC RC;
-		
-method_type ::= type | VOID_KEYWORD;
-			
+type ::= INT_KEYWORD 
+		{: RESULT = new PrimitiveType(v.getLine(), DataTypes.INT); :}
+		| BOOLEAN_KEYWORD 
+		{: RESULT = new PrimitiveType(v.getLine(), DataTypes.BOOLEAN); :}
+		| STRING_KEYWORD
+		{: RESULT = new PrimitiveType(v.getLine(), DataTypes.STRING); :}
+		| CLASS_KEYWORD 
+		{: RESULT = new PrimitiveType(v.getLine(), DataTypes.CLASS); :}
+		| type:t LC RC
+		{: RESULT = t.incrementDimension(); :}
+;
+	
+formal_list ::= formal:f
+		{: RESULT = new ArrayList<Formal>(f); :}
+		| formal_list:fl COMMA formal:f
+		{: fl.add(f); RESULT = fl; :}
+;
+
+formal ::= type:t ID:id
+		{: RESULT = new Formal(t, (String)id.getValue()); :}
+;
+	
 /* stmnt_list ::= stmnt_list stmnt | stmnt; */
-
-formal ::= type ID;
-
-formals_list ::= formal_list COMMA formal;
