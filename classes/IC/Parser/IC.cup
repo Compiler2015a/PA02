@@ -1,13 +1,39 @@
 package IC.Parser;
 import java_cup.runtime.*;
-
+import java.util.ArrayList;
+import java.util.List;
 import IC.AST.*;
 
-/* Preliminaries to set up and use the scanner.  */
-init with {: 
-	scanner.init();
-	:};
-scan with {: return scanner.next_token(); :};
+parser code  {:
+	/** Causes the parsr to print every token it reads.
+	 * This is useful for debugging.
+	 */
+	public boolean printTokens;
+	
+	private Lexer lexer;
+	private int arrayDimentionCounter = 0;
+	
+	private String getValueFromToken(Object obj) {
+		Token token = (Token)obj;
+		return token.getValue().toString();
+	}
+	
+	private int getLineFromToken(Object obj) {
+		Token token = (Token)obj;
+		return token.getLine();
+	}
+	
+	public parser(Lexer lexer) {
+		super(lexer);
+		this.lexer = lexer;
+	}
+:}
+
+scan with 
+{: 
+	Symbol s = lexer.next_token();
+	return new Token(s.sym, s.value, s.left, s.right);
+:};
 
 /* Terminals (tokens returned by the scanner). */
 terminal			ID, CLASS_ID, SEMICOLON, COMMA;
@@ -32,8 +58,8 @@ terminal			LP, RP, LC, RC, LB, RB, DOT, EXCLAMATION_MARK, PLUS, MINUS, MULT,
 terminal UMINUS;
 
 /* Non terminals */
-non terminal            program, classDecl_list, classDecl, classLines_list, type, method_type, 
-						method, field, extra_fields, params, extra_params,
+non terminal            program, icClass_list, icClass, classLines_list, type, method_type, 
+						method, fields, extra_fields, formal, formal_list,
 						stmnt, stmnt_list, elseStmn, call, staticCall, virtualCall,
 						extra_exprs, location, binop, unop, literal;
 non terminal Integer    expr;
@@ -50,93 +76,110 @@ precedence left UMINUS;
 precedence left LC, LP;
 
 /* The grammar */
-program ::= classDecl_list;
+program ::= icClass_list:icCl
+			{: RESULT = new Program((List<ICClass>)icCl); :}
+;
 
-classDecl_list ::= classDecl classDecl_list | ;
+icClass_list ::= icClass_list:icCl icClass:icC
+				 {: ((List<ICClass>)icCl).add((ICClass)icC); RESULT = classes; :}
+  				 |
+  				 {: RESULT = new ArrayList<ICClass>(); :}
+;
 
-classDecl ::= CLASS_KEYWORD CLASS_ID EXTENDS_KEYWORD CLASS_ID:c LB classLines_list RB
-				{: System.out.println("Declaration of class: " + c); :} 
+icClass ::= CLASS_KEYWORD:class_key CLASS_ID:cName EXTENDS_KEYWORD CLASS_ID:superCName LB classLines_list:clines RB
+			{: RESULT = new ICClass(getLineFromToken(class_key), getValueFromToken(cName), 
+									getValueFromToken(superCName), ((ClassLines)clines).fields, ((ClassLines)clines).methods); :} 
 			| CLASS_KEYWORD CLASS_ID:c LB classLines_list RB
-				{: System.out.println("Declaration of class: " + c); :} ;
+			{: RESULT = new ICClass(getLineFromToken(class_key), getValueFromToken(cName), 
+									null, ((ClassLines)clines).fields, ((ClassLines)clines).methods); :}
 				
 
 
-classLines_list ::= method classLines_list | field classLines_list | ;
+classLines_list ::= classLines_list:clines method:m
+					{: ((ClassLines)clines).methods.add((Method)m); RESULT = clines; :}
+					| classLines_list:clines fields:fl
+					{: ((ClassLines)clines).fields.addll((List<Field>)fl); RESULT = clines; :}
+					| 
+					{: RESULT = new ClassLines()
+						{
+							public List<Method> methods = new ArrayList<Method>();
+							public List<Field> fields = new ArrayList<Field>();
+						} 
+					:}
+;
 
-field ::= type ID:f extra_fields
-				{: System.out.println("Declaration of field: " + f); :} ;
+fields ::=  type:t ID:fName extra_fields:fNamesl
+			{: 
+				List<String> fields_names_list = (List<String>)fNamesl;
+				fields_names_list.add(0, getValueFromToken(fName));
+				fields_list = new ArrayList<Field>();
+				for (int i = 0; i < fields_names_list.size(); i++)
+					fields_list.add(new Field((type)t, fields_names_list.get(i))); 
+				RESULT = fields_list; 
+			:}
+;
 
-extra_fields ::= COMMA ID extra_fields | SEMICOLON;
+extra_fields ::= COMMA ID:fName extra_fields:fNamesl
+				 {: 
+				 	List<String> fields_names_list = (List<Field>)fNamesl;
+				 	fields_names_list.add(0, getValueFromToken(fName));
+				 	RESULT = fields_names_list;
+				 :}
+ 				| SEMICOLON
+ 				{: RESULT = new ArrayList<String>(); :}
+;
 
-method ::= STATIC_KEYWORD method_type ID:m LP params RP LB stmnt_list RB 
+method ::= STATIC_KEYWORD method_type ID:m LP formal_list RP LB stmnt_list RB 
 			{:
 				System.out.println("Declaration of static method: " + m);
 			:}
-			| method_type ID:m LP params RP LB stmnt_list RB
+			| method_type ID:m LP formal_list RP LB stmnt_list RB
 			{:
 				System.out.println("Declaration of virtual method: " + m);
 			:} ; 
 
-params ::= type ID:p extra_params 
-			{:
-				System.out.println("Parameter: " + p);
-			:} | ;
+formal_list ::= 
+		formal_list:fl COMMA formal:f
+		{: ((List<Formal>)fl).add((Formal)f); RESULT = fl; :}
+		|
+		{: RESULT = new ArrayList<Formal>(); :}
+;
 
-extra_params ::= COMMA type ID:p extra_params
- 			{:
-				System.out.println("Parameter: " + p);
-			:} | ;
+formal ::= type:t ID:formalName
+		{: RESULT = new Formal((Type)t, getValueFromToken(formalName)); :}
+;
 
-type ::= INT_KEYWORD:pt 
-		 {:
-		 	if (parserAssistingVarables.arrayDimentionCounter == 0)
-		 		System.out.println("Primitive data type: " + pt);
-		 	else {
-		 		System.out.println("Primitive data type: " + parserAssistingVarables.arrayDimentionCounter + "-dimensional array of " + pt);
-		 		parserAssistingVarables.arrayDimentionCounter = 0;
-		 	}
-		 :} |
-		 BOOLEAN_KEYWORD:pt 
-		 {:
-		 	if (parserAssistingVarables.arrayDimentionCounter == 0)
-		 		System.out.println("Primitive data type: " + pt);
-		 	else {
-		 		System.out.println("Primitive data type: " + parserAssistingVarables.arrayDimentionCounter + "-dimensional array of " + pt);
-		 		parserAssistingVarables.arrayDimentionCounter = 0;
-		 	}
-		 :} |
-		 STRING_KEYWORD:pt
-		 {:
-		 	if (parserAssistingVarables.arrayDimentionCounter == 0)
-		 		System.out.println("Primitive data type: " + pt);
-		 	else {
-		 		System.out.println("Primitive data type: " + parserAssistingVarables.arrayDimentionCounter + "-dimensional array of " + pt);
-		 		parserAssistingVarables.arrayDimentionCounter = 0;
-		 	}
-		 :} |
-		 CLASS_ID:ct
-		 {:
-		 	System.out.println("User-defined data type: " + ct);
-		 :} |
-		 type LC RC
-		 {:
-		 	parserAssistingVarables.arrayDimentionCounter++;
-		 :} ;
-method_type ::= type |
-				VOID_KEYWORD
-				{:
-					System.out.println("Primitive data type: void");
-				:} ;
+type ::= INT_KEYWORD:intKey
+		{: RESULT = new PrimitiveType(getLineFromToken(intKey), DataTypes.INT); :}
+		| BOOLEAN_KEYWORD:boolKey
+		{: RESULT = new PrimitiveType(getLineFromToken(boolKey), DataTypes.BOOLEAN); :}
+		| STRING_KEYWORD:strKey
+		{: RESULT = new PrimitiveType(getLineFromToken(strKey), DataTypes.STRING); :}
+		| CLASS_ID:c
+		{: RESULT = new UserType(getLineFromToken(c), getValueFromToken(c)); :}
+		| type:t LC RC
+		{: RESULT = ((Type)t).incrementDimension(); :}
+;
+
+method_type ::= VOID_KEYWORD:v
+		{: RESULT = new PrimitiveType(getLineFromToken(v), DataTypes.VOID); :}
+		| type:t
+		{: RESULT = t; :}
+;
 			
-stmnt_list ::= stmnt stmnt_list  | ; 
+stmnt_list ::= stmnt_list:sl stmnt:s
+	 	{: ((List<Statement>)sl).add((Statement)s); RESULT = sl; :}
+		| 
+		{: RESULT = new ArrayList<Statement>(); :}
+; 
 
-stmnt ::= 	location ASSIGN expr SEMICOLON 
+stmnt ::= 	location:l ASSIGN expr SEMICOLON 
 			{:
-				System.out.println("Assignment statement");
+				RESULT = new Location(l.getLine()); 
 			:} |
-			call SEMICOLON
+			call:c SEMICOLON
 			{:
-				System.out.println("Method call statement");
+				RESULT = new CallStatement(c);
 			:} | RETURN_KEYWORD SEMICOLON |
 			RETURN_KEYWORD expr SEMICOLON
 			{:
