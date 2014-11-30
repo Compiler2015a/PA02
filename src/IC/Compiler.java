@@ -6,6 +6,7 @@ import java.io.FileReader;
 import java_cup.Lexer;
 import java_cup.runtime.Symbol;
 import IC.AST.Program;
+import IC.Parser.LibParser;
 import IC.Parser.Parser;
 
 public class Compiler {
@@ -22,7 +23,7 @@ public class Compiler {
 				FileReader libFile = new FileReader(args[1].substring(2));
 
 				Lexer libScanner = new Lexer(libFile);
-				Parser libParser = new Parser(libScanner);
+				LibParser libParser = new LibParser(libScanner);
 
 				Symbol libParseSymbol = libParser.parse();
 				Program libRoot = (Program) libParseSymbol.value;

@@ -1,12 +1,41 @@
 package IC.Parser;
 import java_cup.runtime.*;
 import IC.AST.*;
-
+import java.util.List;
 import java.util.ArrayList;
 
+/* Parser code */
+
+parser code  {:
+	/** Causes the parsr to print every token it reads.
+	 * This is useful for debugging.
+	 */
+	public boolean printTokens;
+	
+	private Lexer lexer;
+	private int arrayDimentionCounter = 0;
+	
+	private String getValueFromToken(Object obj) {
+		Token token = (Token)obj;
+		return token.getValue().toString();
+	}
+	
+	private int getLineFromToken(Object obj) {
+		Token token = (Token)obj;
+		return token.getLine();
+	}
+	
+	public LibParser(Lexer lexer) {
+		super(lexer);
+		this.lexer = lexer;
+	}
+:}
+
 /* Preliminaries to set up and use the scanner.  */
-init with {: scanner.init();              :};
-scan with {: return scanner.next_token(); :};
+scan with {: 	
+	Symbol s = lexer.next_token();
+	return new Token(s.sym, s.value, s.left, s.right); 
+	:};
 
 /* Terminals (tokens returned by the scanner). */
 terminal			VOID_KEYWORD, INT_KEYWORD, BOOLEAN_KEYWORD, STRING_KEYWORD;
@@ -23,9 +52,9 @@ non terminal List<Formal> formal_list;
 non terminal Method method;
 non terminal List<Method> method_list;
 non terminal ICClass classDecl;
-non terminal List<ICCLass> classDecl_list;
+non terminal List<ICClass> classDecl_list;
 non terminal Program program;
-non terminal Integer    expr, term, factor;
+/* non terminal Integer    expr, term, factor; */
 
 /* Precedences */
 precedence left PLUS, MINUS;
@@ -38,55 +67,51 @@ program ::= classDecl_list:cl
 ;
 
 classDecl_list ::= classDecl:c
-			{: RESULT = new ArrayList<ICCLass>(c); :}
+			{: List<ICClass> list = new ArrayList<ICClass>(); list.add(c); RESULT = list; :}
 			| classDecl_list:cl classDecl:c
 			{: cl.add(c); RESULT = cl; :}
-			|
-			{: RESULT = new ArrayList<ICClass>(); :}
 ;
 
 classDecl ::= CLASS_KEYWORD CLASS_ID:cid EXTENDS_KEYWORD CLASS_ID:cex LB method_list:ml RB
-			{: RESULT = new ICClass(cid.getLine(), (String)cid.getValue() , (String)cex.getValue(), null, /* SHOULDNT BE NULL IN IC.cup */
+			{: RESULT = new ICClass(getLineFromToken(cid), getValueFromToken(cid) , getValueFromToken(cex), null, /* SHOULDNT BE NULL IN IC.cup */
 			ml); :}
-			| CLASS_KEYWORD CLASS_ID LB method_list:ml RB /*Library has no need for (field|method)* */
-			{: RESULT = new ICClass(cid.getLine(), (String)cid.getValue() , null, /* SHOULDNT BE NULL IN IC.cup */
+			| CLASS_KEYWORD CLASS_ID:cid LB method_list:ml RB /*Library has no need for (field|method)* */
+			{: RESULT = new ICClass(getLineFromToken(cid), getValueFromToken(cid) , null, /* SHOULDNT BE NULL IN IC.cup */
 			ml); :}
 ; 
 			
 method_list ::= method:m
-		{: RESULT = new ArrayList<Method>(m); :}
+		{: List<Method> list = new ArrayList<Method>(); list.add(m); RESULT = list; :}
 		| method_list:ml method:m 
 		{: ml.add(m); RESULT = ml; :}
-		|
-		{: RESULT = new ArrayList<Method>(); :}
 ;	
 	
 method ::= STATIC_KEYWORD method_type:t ID:id LP formal_list:fl RP SEMICOLON /* LB stmnt_list RB */
-			{: RESULT = new StaticMethod(t, (String)id.getValue(), fl, null); :} /* statement list not null in IC.cup */
+			{: RESULT = new StaticMethod(t, getValueFromToken(id), fl, null); :} /* statement list not null in IC.cup */
 			| method_type:t ID:id LP formal_list:fl RP SEMICOLON /* LB stmnt_list RB; */
-			{: RESULT = new Method(t, (String)id.getValue(), fl, null); :} /* statement list not null in IC.cup */
+			{: RESULT = new LibraryMethod(t, getValueFromToken(id), fl); :} /* statement list not null in IC.cup */
 ;
 			
 method_type ::= VOID_KEYWORD:v
-		{: RESULT = new PrimitiveType(v.getLine(), DataTypes.VOID); :}
+		{: RESULT = new PrimitiveType(getLineFromToken(v), IC.DataTypes.VOID); :}
 		| type:t
 		{: RESULT = t; :}
 ;
 			
-type ::= INT_KEYWORD:intKey
-		{: RESULT = new PrimitiveType(intKey.getLine(), DataTypes.INT); :}
+type ::= type:t LC RC
+		{: t.incrementDimension(); RESULT = t; :}
+		| INT_KEYWORD:intKey
+		{: RESULT = new PrimitiveType(getLineFromToken(intKey), IC.DataTypes.INT); :}
 		| BOOLEAN_KEYWORD:boolKey
-		{: RESULT = new PrimitiveType(boolKey.getLine(), DataTypes.BOOLEAN); :}
+		{: RESULT = new PrimitiveType(getLineFromToken(boolKey), IC.DataTypes.BOOLEAN); :}
 		| STRING_KEYWORD:strKey
-		{: RESULT = new PrimitiveType(strKey.getLine(), DataTypes.STRING); :}
+		{: RESULT = new PrimitiveType(getLineFromToken(strKey), IC.DataTypes.STRING); :}
 		| CLASS_ID:c
-		{: RESULT = new UserType(c.getLine(), c.getValue()); :}
-		| type:t LC RC
-		{: RESULT = t.incrementDimension(); :}
+		{: RESULT = new UserType(getLineFromToken(c), getValueFromToken(c)); :}
 ;
 	
 formal_list ::= formal:f
-		{: RESULT = new ArrayList<Formal>(f); :}
+		{: List<Formal> list = new ArrayList<Formal>(); list.add(f); RESULT = list; :}
 		| formal_list:fl COMMA formal:f
 		{: fl.add(f); RESULT = fl; :}
 		|
@@ -94,7 +119,7 @@ formal_list ::= formal:f
 ;
 
 formal ::= type:t ID:id
-		{: RESULT = new Formal(t, (String)id.getValue()); :}
+		{: RESULT = new Formal(t, getValueFromToken(id)); :}
 ;
 	
 /* stmnt_list ::= stmnt_list stmnt | stmnt; */
