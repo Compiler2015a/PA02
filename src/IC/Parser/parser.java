@@ -5,29 +5,35 @@
 
 package IC.Parser;
 
-import java.util.List;
+import java.util.ArrayList;
 
-import java_cup.runtime.*;
-import IC.AST.*;
-import java_cup.runtime.XMLElement;
+import java_cup.runtime.Symbol;
+import IC.DataTypes;
+import IC.AST.CallStatement;
+import IC.AST.Formal;
+import IC.AST.Location;
+import IC.AST.PrimitiveType;
+import IC.AST.Statement;
+import IC.AST.Type;
+import IC.AST.UserType;
 
 /** CUP v0.11b 20140808 (SVN rev 54) generated parser.
   */
 @SuppressWarnings({"rawtypes"})
-public class parser extends java_cup.runtime.lr_parser {
+public class Parser extends java_cup.runtime.lr_parser {
 
  public final Class getSymbolContainer() {
     return sym.class;
 }
 
   /** Default constructor. */
-  public parser() {super();}
+  public Parser() {super();}
 
   /** Constructor which sets the default scanner. */
-  public parser(java_cup.runtime.Scanner s) {super(s);}
+  public Parser(java_cup.runtime.Scanner s) {super(s);}
 
   /** Constructor which sets the default scanner. */
-  public parser(java_cup.runtime.Scanner s, java_cup.runtime.SymbolFactory sf) {super(s,sf);}
+  public Parser(java_cup.runtime.Scanner s, java_cup.runtime.SymbolFactory sf) {super(s,sf);}
 
   /** Production table. */
   protected static final short _production_table[][] = 
@@ -545,7 +551,7 @@ public class parser extends java_cup.runtime.lr_parser {
 		return token.getLine();
 	}
 	
-	public parser(Lexer lexer) {
+	public Parser(Lexer lexer) {
 		super(lexer);
 		this.lexer = lexer;
 	}
@@ -554,10 +560,10 @@ public class parser extends java_cup.runtime.lr_parser {
 /** Cup generated class to encapsulate user supplied action code.*/
 @SuppressWarnings({"rawtypes", "unchecked", "unused"})
 class CUP$parser$actions {
-  private final parser parser;
+  private final Parser parser;
 
   /** Constructor */
-  CUP$parser$actions(parser parser) {
+  CUP$parser$actions(Parser parser) {
     this.parser = parser;
   }
 

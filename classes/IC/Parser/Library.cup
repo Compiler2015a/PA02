@@ -81,7 +81,8 @@ type ::= INT_KEYWORD:intKey
 		{: RESULT = t.incrementDimension(); :}
 ;
 	
-formal_list ::= 
+formal_list ::= formal:f
+		{: RESULT = new ArrayList<Formal>(f); :}
 		| formal_list:fl COMMA formal:f
 		{: fl.add(f); RESULT = fl; :}
 		|
