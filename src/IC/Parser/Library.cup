@@ -44,6 +44,7 @@ terminal			CLASS_KEYWORD, CLASS_ID, EXTENDS_KEYWORD, STATIC_KEYWORD;
 terminal            LP, RP, LB, RB, LC, RC, COMMA, SEMICOLON;
 
 /* Non terminals */
+non terminal epsilon;
 non terminal Type type, method_type;
 non terminal List<Formal> formal_list, extra_formals;
 non terminal Formal formal;
@@ -59,7 +60,9 @@ program ::= classDecl_list:cl
 			{: RESULT = new Program(cl); :}
 ;
 
-classDecl_list ::= classDecl:c
+classDecl_list ::= epsilon
+			{: RESULT = new ArrayList<ICClass>(); :}
+			|classDecl:c
 			{: List<ICClass> list = new ArrayList<ICClass>(); list.add(c); RESULT = list; :}
 			| classDecl_list:cl classDecl:c
 			{: cl.add(c); RESULT = cl; :}
@@ -73,7 +76,9 @@ classDecl ::= CLASS_KEYWORD CLASS_ID:cid EXTENDS_KEYWORD CLASS_ID:cex LB method_
 			ml); :}
 ; 
 			
-method_list ::= method:m
+method_list ::= epsilon
+		{: RESULT = new ArrayList<Method>(); :}
+		| method:m
 		{: List<Method> list = new ArrayList<Method>(); list.add(m); RESULT = list; :}
 		| method_list:ml method:m 
 		{: ml.add(m); RESULT = ml; :}
@@ -103,15 +108,15 @@ type ::= type:t LC RC
 		{: RESULT = new UserType(getLineFromToken(c), getStringValueFromToken(c)); :}
 ;
 	
-formal_list ::= formal:f extra_formals:ef 
-				{: ef.add(0, f); RESULT = ef; :} 
-				| 
+formal_list ::= epsilon
 				{: RESULT = new ArrayList<Formal>(); :}
+				| formal:f extra_formals:ef 
+				{: ef.add(0, f); RESULT = ef; :} 
 ;
 
 extra_formals ::= COMMA formal:f extra_formals:ef
 				 {: ef.add(0, f); RESULT = ef; :} 
-				 | 
+				 | epsilon
 				 {: RESULT = new ArrayList<Formal>(); :}
 ;
 
@@ -119,4 +124,8 @@ formal ::= type:t ID:fName
 		{: RESULT = new Formal(t, getStringValueFromToken(fName)); :}
 ;
 	
+epsilon ::= 
+		{: :}
+;
+
 /* stmnt_list ::= stmnt_list stmnt | stmnt; */

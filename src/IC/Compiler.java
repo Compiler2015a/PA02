@@ -3,7 +3,7 @@ package IC;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 
-import java_cup.Lexer;
+import IC.Parser.Lexer;
 import java_cup.runtime.Symbol;
 import IC.AST.Program;
 import IC.Parser.LibParser;
@@ -18,7 +18,7 @@ public class Compiler {
 			System.exit(-1);
 		}
 		try {
-			if(args[1].substring(0, 2).equals("-L")) { //if library required
+			if(args.length == 2 && args[1].substring(0, 2).equals("-L")) { //if library required
 				//parse library file
 				FileReader libFile = new FileReader(args[1].substring(2));
 
@@ -41,8 +41,10 @@ public class Compiler {
 
 		} catch (FileNotFoundException e) {
 			System.err.println(e.toString());
+			e.printStackTrace();
 		} catch (Exception e) {
 			System.err.println(e.toString());
+			e.printStackTrace();
 		}
 	}
 }
