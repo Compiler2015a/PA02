@@ -40,10 +40,8 @@ public class Compiler {
 
 
 		} catch (FileNotFoundException e) {
-			System.err.println(e.toString());
 			e.printStackTrace();
 		} catch (Exception e) {
-			System.err.println(e.toString());
 			e.printStackTrace();
 		}
 	}

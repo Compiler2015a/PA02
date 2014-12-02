@@ -29,6 +29,10 @@ parser code  {:
 		super(lexer);
 		this.lexer = lexer;
 	}
+	
+	public void syntax_error(Symbol s) { 
+	System.out.println("compiler has detected a syntax error at line " + ((Token)s).getLine() + " column " + ((Token)s).getColumn()+ " value " + ((Token)s).getValue().toString()); 
+	}
 :}
 
 /* Preliminaries to set up and use the scanner.  */
@@ -44,35 +48,44 @@ terminal			CLASS_KEYWORD, CLASS_ID, STATIC_KEYWORD;
 terminal            LP, RP, LB, RB, LC, RC, COMMA, SEMICOLON;
 
 /* Non terminals */
+non terminal epsilon;
 non terminal Program program;
 non terminal ICClass libic;
 non terminal LibraryMethod libmethod;
-non terminal List<LibraryMethod> libmethod_list;
-non terminal List<Formal> formal_list, extra_formals;
+non terminal List<Method> libmethod_list_inter, libmethod_list;
+non terminal List<Formal> formal_list_inter, formal_list, extra_formals;
 non terminal Formal formal;
 non terminal Type type, method_type;
-non terminal epsilon;
+
+/* Precedences */
+precedence left ID;
+precedence left LC, LP, LB;
 
 /* The grammar */
 program ::= libic:lib
-		{: List<ICClass> list = new ArrayList<ICClass>(); list.add(lib); RESULT = list; :}
+		{: List<ICClass> list = new ArrayList<ICClass>(); list.add(lib); RESULT = new Program(list); :}
 ;
 
-libic ::= CLASS_KEYWORD:ck CLASS_ID:cid LB libmethod_list:ml RB
-		{: if(cid.getValue().equals("Library") 
+libic ::= CLASS_KEYWORD:ck CLASS_ID:cid LB libmethod_list_inter:ml RB
+		{: if(getStringValueFromToken(cid).equals("Library")) 
 			{ RESULT = new ICClass(getLineFromToken(ck), getStringValueFromToken(cid), null,
-			ml) } else { RESULT = null; } :}
+			ml); } else { RESULT = null; } :}
+;
+
+libmethod_list_inter ::= epsilon
+		{: RESULT = new ArrayList<Method>(); :}
+		| libmethod_list:ml
+		{: RESULT = ml; :}
 ;
 
 libmethod_list ::= libmethod:m
-		{: List<Method> list = new ArrayList<Method>(); list.add(m); RESULT = m; :}
+		{: List<Method> list = new ArrayList<Method>(); list.add(m); RESULT = list; :}
 		| libmethod_list:ml libmethod:m
 		{: ml.add(m); RESULT = ml; :}
 ;
 
-libmethod ::= STATIC_KEYWORD method_type:mt ID:id LP formal_list:fl RP SEMICOLON
-		{: RESULT = new StaticMethod(mt, getStringValueFromToken(id), fl,
-			null); :}
+libmethod ::= STATIC_KEYWORD method_type:mt ID:id LP formal_list_inter:fl RP SEMICOLON
+		{: RESULT = new LibraryMethod(mt, getStringValueFromToken(id), fl); :}
 ;
 
 method_type ::= VOID_KEYWORD:v
@@ -93,16 +106,20 @@ type ::= type:t LC RC
 		{: RESULT = new UserType(getLineFromToken(c), getStringValueFromToken(c)); :}
 ;
 
-formal_list ::= epsilon
-				{: RESULT = new ArrayList<Formal>(); :}
-				| formal:f extra_formals:ef 
-				{: ef.add(0, f); RESULT = ef; :} 
+formal_list_inter ::= epsilon
+		{: RESULT = new ArrayList<Formal>(); :}
+		| formal_list:fl
+		{: RESULT =  fl; :}
+;
+
+formal_list ::= formal:f extra_formals:ef 
+		{: ef.add(0, f); RESULT = ef; :} 
 ;
 
 extra_formals ::= epsilon
-				{: RESULT = new ArrayList<Formal>(); :}
-				| COMMA formal:f extra_formals:ef
-				{: ef.add(0, f); RESULT = ef; :} 
+		{: RESULT = new ArrayList<Formal>(); :}
+		| COMMA formal:f extra_formals:ef
+		{: ef.add(0, f); RESULT = ef; :} 
 ;
 
 formal ::= type:t ID:fName
@@ -110,4 +127,5 @@ formal ::= type:t ID:fName
 ;
 
 epsilon ::=
+		{: :}
 ;
