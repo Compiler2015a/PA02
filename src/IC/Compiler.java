@@ -3,11 +3,11 @@ package IC;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 
-import IC.Parser.Lexer;
 import java_cup.runtime.Symbol;
 import IC.AST.Program;
-import IC.Parser.LibParser;
+import IC.Parser.Lexer;
 import IC.Parser.Parser;
+import IC.Parser.Library.LibParser;
 
 public class Compiler {
 
@@ -22,13 +22,15 @@ public class Compiler {
 				//parse library file
 				FileReader libFile = new FileReader(args[1].substring(2));
 
-				Lexer libScanner = new Lexer(libFile);
+				IC.Parser.Library.Lexer libScanner = new IC.Parser.Library.Lexer(libFile);
 				LibParser libParser = new LibParser(libScanner);
 
 				Symbol libParseSymbol = libParser.debug_parse();
 				Program libRoot = (Program) libParseSymbol.value;
 			}
-
+			
+			System.out.println("Done parsing library!");
+			
 			//parse IC file
 			FileReader icFile = new FileReader(args[0]);
 
