@@ -25,7 +25,7 @@ public class Compiler {
 				Lexer libScanner = new Lexer(libFile);
 				LibParser libParser = new LibParser(libScanner);
 
-				Symbol libParseSymbol = libParser.parse();
+				Symbol libParseSymbol = libParser.debug_parse();
 				Program libRoot = (Program) libParseSymbol.value;
 			}
 

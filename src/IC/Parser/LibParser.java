@@ -161,8 +161,9 @@ public class LibParser extends java_cup.runtime.lr_parser {
 		this.lexer = lexer;
 	}
 	
-	public void syntax_error(Symbol s) { 
-	System.out.println("compiler has detected a syntax error at line " + ((Token)s).getLine() + " column " + ((Token)s).getColumn()+ " value " + ((Token)s).getValue().toString()); 
+	public void syntax_error(Symbol s) {
+		Token tok = (Token) s;
+		System.out.println("" + tok.getLine()+":"+tok.getColumn()+" : Syntax error; unexpected " + tok);
 	}
 
 
@@ -197,7 +198,7 @@ class CUP$LibParser$actions {
 		int libleft = ((java_cup.runtime.Symbol)CUP$LibParser$stack.peek()).left;
 		int libright = ((java_cup.runtime.Symbol)CUP$LibParser$stack.peek()).right;
 		ICClass lib = (ICClass)((java_cup.runtime.Symbol) CUP$LibParser$stack.peek()).value;
-		 System.out.println("program->libic"); List<ICClass> list = new ArrayList<ICClass>(); list.add(lib); RESULT = new Program(list); 
+		 List<ICClass> list = new ArrayList<ICClass>(); list.add(lib); RESULT = new Program(list); 
               CUP$LibParser$result = parser.getSymbolFactory().newSymbol("program",1, ((java_cup.runtime.Symbol)CUP$LibParser$stack.peek()), ((java_cup.runtime.Symbol)CUP$LibParser$stack.peek()), RESULT);
             }
           return CUP$LibParser$result;
@@ -229,7 +230,7 @@ class CUP$LibParser$actions {
 		int mlleft = ((java_cup.runtime.Symbol)CUP$LibParser$stack.elementAt(CUP$LibParser$top-1)).left;
 		int mlright = ((java_cup.runtime.Symbol)CUP$LibParser$stack.elementAt(CUP$LibParser$top-1)).right;
 		List<Method> ml = (List<Method>)((java_cup.runtime.Symbol) CUP$LibParser$stack.elementAt(CUP$LibParser$top-1)).value;
-		 System.out.println("libic->..."); if(getStringValueFromToken(cid).equals("Library")) 
+		 if(getStringValueFromToken(cid).equals("Library")) 
 			{ RESULT = new ICClass(getLineFromToken(ck), getStringValueFromToken(cid), null,
 			ml); } else { RESULT = null; } 
               CUP$LibParser$result = parser.getSymbolFactory().newSymbol("libic",2, ((java_cup.runtime.Symbol)CUP$LibParser$stack.elementAt(CUP$LibParser$top-4)), ((java_cup.runtime.Symbol)CUP$LibParser$stack.peek()), RESULT);

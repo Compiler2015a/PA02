@@ -30,8 +30,9 @@ parser code  {:
 		this.lexer = lexer;
 	}
 	
-	public void syntax_error(Symbol s) { 
-	System.out.println("compiler has detected a syntax error at line " + ((Token)s).getLine() + " column " + ((Token)s).getColumn()+ " value " + ((Token)s).getValue().toString()); 
+	public void syntax_error(Symbol s) {
+		Token tok = (Token) s;
+		System.out.println("" + tok.getLine()+":"+tok.getColumn()+" : Syntax error; unexpected " + tok);
 	}
 :}
 
