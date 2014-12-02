@@ -40,47 +40,62 @@ scan with {:
 /* Terminals (tokens returned by the scanner). */
 terminal			VOID_KEYWORD, INT_KEYWORD, BOOLEAN_KEYWORD, STRING_KEYWORD;
 terminal			ID;
-terminal			CLASS_KEYWORD, CLASS_ID, STATIC_KEYWORD;
+terminal			CLASS_KEYWORD, CLASS_ID, EXTENDS_KEYWORD, STATIC_KEYWORD;
 terminal            LP, RP, LB, RB, LC, RC, COMMA, SEMICOLON;
 
 /* Non terminals */
-non terminal Program program;
-non terminal ICClass libic;
-non terminal LibraryMethod libmethod;
-non terminal List<LibraryMethod> libmethod_list;
+non terminal epsilon;
+non terminal Type type, method_type;
 non terminal List<Formal> formal_list, extra_formals;
 non terminal Formal formal;
-non terminal Type type, method_type;
-non terminal epsilon;
+non terminal Method method;
+non terminal List<Method> method_list;
+non terminal ICClass classDecl;
+non terminal List<ICClass> classDecl_list;
+non terminal Program program;
+/* non terminal Integer    expr, term, factor; */
 
 /* The grammar */
-program ::= libic:lib
-		{: List<ICClass> list = new ArrayList<ICClass>(); list.add(lib); RESULT = list; :}
+program ::= classDecl_list:cl
+			{: RESULT = new Program(cl); :}
 ;
 
-libic ::= CLASS_KEYWORD:ck CLASS_ID:cid LB libmethod_list:ml RB
-		{: if(cid.getValue().equals("Library") 
-			{ RESULT = new ICClass(getLineFromToken(ck), getStringValueFromToken(cid), null,
-			ml) } else { RESULT = null; } :}
+classDecl_list ::= epsilon
+			{: RESULT = new ArrayList<ICClass>(); :}
+			|classDecl:c
+			{: List<ICClass> list = new ArrayList<ICClass>(); list.add(c); RESULT = list; :}
+			| classDecl_list:cl classDecl:c
+			{: cl.add(c); RESULT = cl; :}
 ;
 
-libmethod_list ::= libmethod:m
-		{: List<Method> list = new ArrayList<Method>(); list.add(m); RESULT = m; :}
-		| libmethod_list:ml libmethod:m
+classDecl ::= CLASS_KEYWORD CLASS_ID:cid EXTENDS_KEYWORD CLASS_ID:cex LB method_list:ml RB
+			{: RESULT = new ICClass(getLineFromToken(cid), getStringValueFromToken(cid) , getStringValueFromToken(cex), null, /* SHOULDNT BE NULL IN IC.cup */
+			ml); :}
+			| CLASS_KEYWORD CLASS_ID:cid LB method_list:ml RB /*Library has no need for (field|method)* */
+			{: RESULT = new ICClass(getLineFromToken(cid), getStringValueFromToken(cid) , null, /* SHOULDNT BE NULL IN IC.cup */
+			ml); :}
+; 
+			
+method_list ::= epsilon
+		{: RESULT = new ArrayList<Method>(); :}
+		| method:m
+		{: List<Method> list = new ArrayList<Method>(); list.add(m); RESULT = list; :}
+		| method_list:ml method:m 
 		{: ml.add(m); RESULT = ml; :}
+;	
+	
+method ::= STATIC_KEYWORD method_type:t ID:id LP formal_list:fl RP SEMICOLON /* LB stmnt_list RB */
+			{: RESULT = new StaticMethod(t, getStringValueFromToken(id), fl, null); :} /* statement list not null in IC.cup */
+			| method_type:t ID:id LP formal_list:fl RP SEMICOLON /* LB stmnt_list RB; */
+			{: RESULT = new LibraryMethod(t, getStringValueFromToken(id), fl); :} /* statement list not null in IC.cup */
 ;
-
-libmethod ::= STATIC_KEYWORD method_type:mt ID:id LP formal_list:fl RP SEMICOLON
-		{: RESULT = new StaticMethod(mt, getStringValueFromToken(id), fl,
-			null); :}
-;
-
+			
 method_type ::= VOID_KEYWORD:v
 		{: RESULT = new PrimitiveType(getLineFromToken(v), IC.DataTypes.VOID); :}
 		| type:t
 		{: RESULT = t; :}
 ;
-
+			
 type ::= type:t LC RC
 		{: t.incrementDimension(); RESULT = t; :}
 		| INT_KEYWORD:intKey
@@ -92,22 +107,25 @@ type ::= type:t LC RC
 		| CLASS_ID:c
 		{: RESULT = new UserType(getLineFromToken(c), getStringValueFromToken(c)); :}
 ;
-
+	
 formal_list ::= epsilon
 				{: RESULT = new ArrayList<Formal>(); :}
 				| formal:f extra_formals:ef 
 				{: ef.add(0, f); RESULT = ef; :} 
 ;
 
-extra_formals ::= epsilon
-				{: RESULT = new ArrayList<Formal>(); :}
-				| COMMA formal:f extra_formals:ef
-				{: ef.add(0, f); RESULT = ef; :} 
+extra_formals ::= COMMA formal:f extra_formals:ef
+				 {: ef.add(0, f); RESULT = ef; :} 
+				 | epsilon
+				 {: RESULT = new ArrayList<Formal>(); :}
 ;
 
 formal ::= type:t ID:fName
 		{: RESULT = new Formal(t, getStringValueFromToken(fName)); :}
 ;
-
-epsilon ::=
+	
+epsilon ::= 
+		{: :}
 ;
+
+/* stmnt_list ::= stmnt_list stmnt | stmnt; */
