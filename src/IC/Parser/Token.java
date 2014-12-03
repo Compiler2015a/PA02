@@ -6,7 +6,7 @@ public class Token extends Symbol {
 	private Object value;
 	
 	public Token(int id, Object value, int line, int column) {
-		super(id,null);
+		super(id, line, column, value);
 		this.id=id;
 		this.value=value;
 		this.line=line;
