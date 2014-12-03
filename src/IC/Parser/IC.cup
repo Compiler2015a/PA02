@@ -207,7 +207,7 @@ stmnt ::= 	location:l ASSIGN expr:exp SEMICOLON
 			IF_KEYWORD LP expr:condExp RP stmnt:doStmn elseStmn:eStmn
 			{: RESULT = new If(condExp, doStmn, eStmn); :} |
 			WHILE_KEYWORD LP expr:condExp RP stmnt:doStmn 
-			{: RESULT = new If(condExp, doStmn); :} |
+			{: RESULT = new While(condExp, doStmn); :} |
 			BREAK_KEYWORD:break_key SEMICOLON
 			{: RESULT = new Break(break_keyleft); :} |
 			CONTINUE_KEYWORD:continue_key SEMICOLON

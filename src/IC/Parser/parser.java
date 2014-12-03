@@ -1088,7 +1088,7 @@ class CUP$Parser$actions {
 		int doStmnleft = ((java_cup.runtime.Symbol)CUP$Parser$stack.peek()).left;
 		int doStmnright = ((java_cup.runtime.Symbol)CUP$Parser$stack.peek()).right;
 		Statement doStmn = (Statement)((java_cup.runtime.Symbol) CUP$Parser$stack.peek()).value;
-		 RESULT = new If(condExp, doStmn); 
+		 RESULT = new While(condExp, doStmn); 
               CUP$Parser$result = parser.getSymbolFactory().newSymbol("stmnt",13, ((java_cup.runtime.Symbol)CUP$Parser$stack.elementAt(CUP$Parser$top-4)), ((java_cup.runtime.Symbol)CUP$Parser$stack.peek()), RESULT);
             }
           return CUP$Parser$result;
