@@ -58,7 +58,7 @@ program ::= libic:lib
 
 libic ::= CLASS_KEYWORD:ck CLASS_ID:cid LB libmethod_list:ml RB
 		{: if(cid.toString().equals("Library")) 
-			{ RESULT = new ICClass(ckleft, cid.toString(), null,
+			{ RESULT = new ICClass(ckleft, cid.toString(), new ArrayList<Field>(),
 			ml); } else { RESULT = null; } :}
 ;
 

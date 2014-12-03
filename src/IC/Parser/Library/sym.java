@@ -26,40 +26,6 @@ public class sym {
   public static final int VOID_KEYWORD = 2;
   public static final int BOOLEAN_KEYWORD = 4;
   public static final int CLASS_ID = 8;
-  
-  public static final int DIVIDE = 38;
-  public static final int FALSE_LITERAL = 23;
-  public static final int STRING_LITERAL = 25;
-  public static final int MULT = 37;
-  public static final int UMINUS = 49;
-  public static final int REMINDER = 39;
-  public static final int EQUALS_OP = 44;
-  public static final int THIS_KEYWORD = 19;
-  public static final int MINUS = 36;
-  public static final int TRUE_LITERAL = 22;
-  public static final int OR_OP = 47;
-  public static final int PLUS = 35;
-  public static final int NEW_KEYWORD = 20;
-  public static final int ASSIGN = 48;
-  public static final int NULL_LITERAL = 24;
-  public static final int LARGER_OP = 41;
-  public static final int DOT = 33;
-  public static final int AND_OP = 46;
-  public static final int SMALLER_EQ_OP = 42;
-  public static final int SMALLER_OP = 40;
-  public static final int NOT_EQUALS_OP = 45;
-  public static final int RETURN_KEYWORD = 13;
-  public static final int WHILE_KEYWORD = 16;
-  public static final int CONTINUE_KEYWORD = 18;
-  public static final int LENGTH_KEYWORD = 21;
-  public static final int EXCLAMATION_MARK = 34;
-  public static final int IF_KEYWORD = 14;
-  public static final int ELSE_KEYWORD = 15;
-  public static final int EXTENDS_KEYWORD = 7;
-  public static final int LARGER_EQ_OP = 43;
-  public static final int INTEGER_LITERAL = 26;
-  public static final int BREAK_KEYWORD = 17;
-  
   public static final String[] terminalNames = new String[] {
   "EOF",
   "error",
@@ -80,5 +46,36 @@ public class sym {
   "COMMA",
   "SEMICOLON"
   };
+public static final int DIVIDE = 0;
+public static final int MULT = 0;
+public static final int INTEGER_LITERAL = 0;
+public static final int LARGER_OP = 0;
+public static final int SMALLER_OP = 0;
+public static final int REMINDER = 0;
+public static final int MINUS = 0;
+public static final int PLUS = 0;
+public static final int EXCLAMATION_MARK = 0;
+public static final int DOT = 0;
+public static final int ASSIGN = 0;
+public static final int STRING_LITERAL = 0;
+public static final int IF_KEYWORD = 0;
+public static final int NOT_EQUALS_OP = 0;
+public static final int SMALLER_EQ_OP = 0;
+public static final int LARGER_EQ_OP = 0;
+public static final int EQUALS_OP = 0;
+public static final int AND_OP = 0;
+public static final int OR_OP = 0;
+public static final int NEW_KEYWORD = 0;
+public static final int ELSE_KEYWORD = 0;
+public static final int TRUE_LITERAL = 0;
+public static final int THIS_KEYWORD = 0;
+public static final int NULL_LITERAL = 0;
+public static final int BREAK_KEYWORD = 0;
+public static final int FALSE_LITERAL = 0;
+public static final int WHILE_KEYWORD = 0;
+public static final int LENGTH_KEYWORD = 0;
+public static final int RETURN_KEYWORD = 0;
+public static final int EXTENDS_KEYWORD = 0;
+public static final int CONTINUE_KEYWORD = 0;
 }
 

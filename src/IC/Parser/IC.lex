@@ -44,7 +44,7 @@ Letters = [A-Za-z]
 ClassIdentifier = {Uppercase}({Letters} | {DecIntegerLiteral} | _)*
 Identifier = {Lowercase}({Letters} | {DecIntegerLiteral} | _)*
 
-DecIntegerLiteral = 0 | [1-9][0-9]*
+DecIntegerLiteral = 0+ | [1-9][0-9]*
 %state STRING
 
 %%

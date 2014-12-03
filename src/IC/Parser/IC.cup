@@ -18,6 +18,11 @@ parser code  {:
 		this.lexer = lexer;
 	}
 	
+	public void syntax_error(Symbol s) {
+		Token tok = (Token) s;
+		System.out.println("" + tok.getLine()+":"+tok.getColumn()+" : Syntax error; unexpected " + tok);
+	}
+	
 	protected class ClassLines
 	{
 		public ClassLines() 
@@ -81,6 +86,8 @@ non terminal IC.UnaryOps unop;
 non terminal Literal literal;
 
 /* Precedences */
+/*precedence left formal, fields, stmnt;
+precedence left method_type;*/
 precedence left ELSE_KEYWORD;
 precedence left DOT;
 precedence left SMALLER_OP, LARGER_OP, SMALLER_EQ_OP, LARGER_EQ_OP, 
@@ -88,7 +95,7 @@ precedence left SMALLER_OP, LARGER_OP, SMALLER_EQ_OP, LARGER_EQ_OP,
 precedence left PLUS, MINUS;
 precedence left MULT, DIVIDE, REMINDER; 
 precedence left UMINUS;
-precedence left ID;
+/*precedence left ID; */
 precedence left LC, LB;
 precedence left LP;
 
@@ -141,8 +148,10 @@ extra_fields ::= COMMA ID:fName extra_fields:fNamesl
 
 method ::= STATIC_KEYWORD method_type:t ID:mName LP formal_list:fl RP LB stmnt_list:sl RB 
 			{: RESULT = new StaticMethod(t, mName.toString(), fl, sl); :}
-			| method_type:t ID:mName LP formal_list:fl RP LB stmnt_list:sl RB
+			| type:t ID:mName LP formal_list:fl RP LB stmnt_list:sl RB
 			{: RESULT = new VirtualMethod(t, mName.toString(), fl, sl); :}
+			| VOID_KEYWORD:v ID:mName LP formal_list:fl RP LB stmnt_list:sl RB
+			{: RESULT = new VirtualMethod(new PrimitiveType(vleft, IC.DataTypes.VOID), mName.toString(), fl, sl); :}
 ; 
 
 formal_list ::= formal:f extra_formals:ef 
@@ -161,11 +170,11 @@ formal ::= type:t ID:fName
 		{: RESULT = new Formal(t, fName.toString()); :}
 ;
 
-method_type ::= VOID_KEYWORD:v
+/*method_type ::= VOID_KEYWORD:v
 		{: RESULT = new PrimitiveType(vleft, IC.DataTypes.VOID); :}
 		| type:t
 		{: RESULT = t; :}
-;
+;*/
 
 type ::= type:t LC RC
 		{: t.incrementDimension(); RESULT = t; :}
