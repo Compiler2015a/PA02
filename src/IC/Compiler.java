@@ -29,7 +29,6 @@ public class Compiler {
 				Symbol libParseSymbol = libParser.parse();
 				Program libRoot = (Program) libParseSymbol.value;
 				
-				System.out.println("Done parsing library!");
 				
 //				// Pretty-print the program to System.out
 //				PrettyPrinter printer = new PrettyPrinter(args[1].substring(2));
@@ -45,9 +44,11 @@ public class Compiler {
 			Lexer scanner = new Lexer(icFile);
 			Parser parser = new Parser(scanner);
 
-			Symbol parseSymbol = parser.debug_parse();
+			Symbol parseSymbol = parser.parse();
 			Program ICRoot = (Program) parseSymbol.value;
-
+	//		 Pretty-print the program to System.out
+			PrettyPrinter printer = new PrettyPrinter(args[0]);
+			System.out.println(printer.visit(ICRoot));
 
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();

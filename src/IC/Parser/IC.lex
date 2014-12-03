@@ -72,7 +72,7 @@ DecIntegerLiteral = 0+ | [1-9][0-9]*
 <YYINITIAL> {
 
   /* literals */
-  {DecIntegerLiteral}            { return token(sym.INTEGER_LITERAL, yytext()); }
+  {DecIntegerLiteral}            { return token(sym.INTEGER_LITERAL, Integer.parseInt(yytext())); }
   "true"           				 { return token(sym.TRUE_LITERAL, yytext()); }
   "false"           			 { return token(sym.FALSE_LITERAL, yytext()); }
   "null"           				 { return token(sym.NULL_LITERAL, yytext()); }
