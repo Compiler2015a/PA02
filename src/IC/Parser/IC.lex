@@ -46,6 +46,8 @@ Identifier = {Lowercase}({Letters} | {DecIntegerLiteral} | _)*
 
 DecIntegerLiteral = 0+ | [1-9][0-9]*
 %state STRING
+%state BCOMMENT
+%state LCOMMENT
 
 %%
  /* keywords */
@@ -110,24 +112,38 @@ DecIntegerLiteral = 0+ | [1-9][0-9]*
  
  <YYINITIAL> {
   /* comments */
-  {Comment}                      { /* ignore */ }
+  
+  "//" 							 { yybegin(LCOMMENTS); }
+
+  "/*" 							 { yybegin(BCOMMENTS); }
+
  
   /* whitespace */
   {WhiteSpace}                   { /* ignore */ }
 }
 
+ <LCOMMENTS> {
+  ["\r"]?["\n"] 			  		 { yybegin(YYINITIAL); }
+  [^\n] 							 { }
+}
+
+ <BCOMMENTS> {
+  "*/"  						 { yybegin(YYINITIAL); }
+  [^]							 {}
+}
+ 
  <STRING> {
   \"                             { yybegin(YYINITIAL); 
 								   string.append("\"");
                                    return stringToken(sym.STRING_LITERAL, 
                                    string.toString()); }
-  [^\n\r\"\\]+                   { string.append( yytext() ); }
+  [^\n\r\"\t\\]+                   { string.append( yytext() ); }
   \\t                            { string.append("\\t"); }
   \\n                            { string.append("\\n"); }
 
   \\r                            { string.append("\\r"); }
   \\\"                           { string.append("\\\""); }
-  \\                             { string.append('\\'); }
+  /*\\                             { string.append('\\'); }*/
   
   \n							 { throw new LexicalError(yytext(), yyline+1, yycolumn+1); } /* unclosed literal string */ 
 }
