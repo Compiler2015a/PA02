@@ -215,7 +215,9 @@ stmnt ::= 	location:l ASSIGN expr:exp SEMICOLON
 			LB:lb stmnt_list:sl RB 
 			{: RESULT = new StatementsBlock(lbleft, sl); :} |
 			type:t ID:vName ASSIGN expr:exp SEMICOLON
-			{: RESULT = new LocalVariable(t, vName.toString(), exp); :}
+			{: RESULT = new LocalVariable(t, vName.toString(), exp); :} |
+			type:t ID:vName SEMICOLON
+			{: RESULT = new LocalVariable(t, vName.toString(), null); :}
 ;
 
 elseStmn ::= ELSE_KEYWORD stmnt:s {: RESULT = s; :} | {: RESULT = null; :} ;
