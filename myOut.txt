@@ -137,7 +137,7 @@
       57: Integer literal: 0
     59: Method call statement
      59: Call to static method: print, in class Library
-       59: String literal: "\"Array elements: \""
+       59: String literal: "Array elements: "
     60: While statement
       60: Logical binary operation: less than
         60: Reference to variable: i
@@ -151,7 +151,7 @@
              61: Reference to variable: i
         62: Method call statement
          62: Call to static method: print, in class Library
-           62: String literal: "\" \""
+           62: String literal: " "
         63: Assignment statement
           63: Reference to variable: i
           63: Mathematical binary operation: addition
@@ -159,7 +159,7 @@
             63: Integer literal: 1
     65: Method call statement
      65: Call to static method: print, in class Library
-       65: String literal: "\"\\n\""
+       65: String literal: "\n"
   68: Declaration of static method: main
     68: Primitive data type: void
     68: Parameter: args
@@ -174,7 +174,7 @@
       71: Block of statements
         72: Method call statement
          72: Call to static method: println, in class Library
-           72: String literal: "\"Unspecified array length\""
+           72: String literal: "Unspecified array length"
         73: Method call statement
          73: Call to static method: exit, in class Library
            73: Integer literal: 1
@@ -192,7 +192,7 @@
       77: Block of statements
         78: Method call statement
          78: Call to static method: println, in class Library
-           78: String literal: "\"Invalid array length\""
+           78: String literal: "Invalid array length"
         79: Method call statement
          79: Call to static method: exit, in class Library
            79: Integer literal: 1
