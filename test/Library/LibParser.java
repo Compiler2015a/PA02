@@ -5,12 +5,20 @@
 
 package IC.Parser.Library;
 
-import IC.Parser.Token;
-import java_cup.runtime.*;
-import IC.AST.*;
-import java.util.List;
 import java.util.ArrayList;
-import java_cup.runtime.XMLElement;
+import java.util.List;
+
+import java_cup.runtime.Symbol;
+import IC.AST.Field;
+import IC.AST.Formal;
+import IC.AST.ICClass;
+import IC.AST.LibraryMethod;
+import IC.AST.Method;
+import IC.AST.PrimitiveType;
+import IC.AST.Program;
+import IC.AST.Type;
+import IC.AST.UserType;
+import IC.Parser.Token;
 
 /** CUP v0.11b 20140808 (SVN rev 54) generated parser.
   */

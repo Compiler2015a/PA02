@@ -1,4 +1,4 @@
-package IC.Parser.Library;
+package IC.Parser;
 import IC.Parser.Token;
 import java_cup.runtime.*;
 import IC.AST.*;
@@ -13,10 +13,10 @@ parser code  {:
 	 */
 	public boolean printTokens;
 	
-	private Lexer lexer;
+	private LibLexer lexer;
 	private int arrayDimentionCounter = 0;
 	
-	public LibParser(Lexer lexer) {
+	public LibParser(LibLexer lexer) {
 		super(lexer);
 		this.lexer = lexer;
 	}

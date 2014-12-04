@@ -7,8 +7,10 @@ import java_cup.runtime.Symbol;
 import IC.AST.PrettyPrinter;
 import IC.AST.Program;
 import IC.Parser.Lexer;
+import IC.Parser.LexicalError;
+import IC.Parser.LibLexer;
+import IC.Parser.LibParser;
 import IC.Parser.Parser;
-import IC.Parser.Library.LibParser;
 
 public class Compiler {
 
@@ -23,7 +25,7 @@ public class Compiler {
 				//parse library file
 				FileReader libFile = new FileReader(args[1].substring(2));
 
-				IC.Parser.Library.Lexer libScanner = new IC.Parser.Library.Lexer(libFile);
+				LibLexer libScanner = new LibLexer(libFile);
 				LibParser libParser = new LibParser(libScanner);
 
 				Symbol libParseSymbol = libParser.parse();
@@ -31,8 +33,8 @@ public class Compiler {
 				
 				
 //				// Pretty-print the program to System.out
-//				PrettyPrinter printer = new PrettyPrinter(args[1].substring(2));
-//				System.out.println(printer.visit(libRoot));
+				PrettyPrinter printer = new PrettyPrinter(args[1].substring(2));
+				System.out.println(printer.visit(libRoot));
 				
 			}
 			
@@ -51,7 +53,9 @@ public class Compiler {
 			System.out.println(printer.visit(ICRoot));
 
 		} catch (FileNotFoundException e) {
-			e.printStackTrace();
+			System.out.println(e);
+		} catch (LexicalError e) {
+			System.out.println(e);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

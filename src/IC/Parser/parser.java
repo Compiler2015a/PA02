@@ -5,11 +5,46 @@
 
 package IC.Parser;
 
-import java_cup.runtime.*;
 import java.util.ArrayList;
 import java.util.List;
-import IC.AST.*;
-import java_cup.runtime.XMLElement;
+
+import java_cup.runtime.Symbol;
+import IC.AST.ArrayLocation;
+import IC.AST.Assignment;
+import IC.AST.Break;
+import IC.AST.Call;
+import IC.AST.CallStatement;
+import IC.AST.Continue;
+import IC.AST.Expression;
+import IC.AST.Field;
+import IC.AST.Formal;
+import IC.AST.ICClass;
+import IC.AST.If;
+import IC.AST.Length;
+import IC.AST.Literal;
+import IC.AST.LocalVariable;
+import IC.AST.Location;
+import IC.AST.LogicalBinaryOp;
+import IC.AST.LogicalUnaryOp;
+import IC.AST.MathBinaryOp;
+import IC.AST.MathUnaryOp;
+import IC.AST.Method;
+import IC.AST.NewArray;
+import IC.AST.NewClass;
+import IC.AST.PrimitiveType;
+import IC.AST.Program;
+import IC.AST.Return;
+import IC.AST.Statement;
+import IC.AST.StatementsBlock;
+import IC.AST.StaticCall;
+import IC.AST.StaticMethod;
+import IC.AST.This;
+import IC.AST.Type;
+import IC.AST.UserType;
+import IC.AST.VariableLocation;
+import IC.AST.VirtualCall;
+import IC.AST.VirtualMethod;
+import IC.AST.While;
 
 /** CUP v0.11b 20140808 (SVN rev 54) generated parser.
   */
