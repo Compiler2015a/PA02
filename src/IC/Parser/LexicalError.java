@@ -23,7 +23,7 @@ public class LexicalError extends IOException
     }
     
     public String toString() {
-    	return ""+this.line+":"+this.column+" Lexical error: "+this.token;
+    	return ""+this.line+":"+this.column+" : Lexical error; "+this.token;
     }
     
     private String token;

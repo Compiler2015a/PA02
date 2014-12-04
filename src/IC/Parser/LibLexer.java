@@ -39,12 +39,12 @@ public class LibLexer implements java_cup.runtime.Scanner {
    * Translates characters to character classes
    */
   private static final String ZZ_CMAP_PACKED = 
-    "\11\0\1\3\1\2\1\0\1\3\1\1\22\0\1\3\7\0\1\27"+
-    "\1\30\1\36\1\0\1\26\2\0\1\35\1\6\11\6\1\0\1\25"+
-    "\5\0\32\5\1\31\1\0\1\32\1\0\1\6\1\0\1\11\1\21"+
-    "\1\7\1\17\1\22\1\4\1\24\1\4\1\14\2\4\1\10\1\4"+
-    "\1\20\1\16\2\4\1\23\1\12\1\13\1\4\1\15\4\4\1\33"+
-    "\1\0\1\34\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uff92\0";
+    "\11\0\1\3\1\2\1\0\1\3\1\1\22\0\1\3\7\0\1\31"+
+    "\1\32\1\40\1\0\1\30\2\0\1\37\1\6\11\6\1\0\1\27"+
+    "\5\0\13\5\1\7\16\5\1\33\1\0\1\34\1\0\1\6\1\0"+
+    "\1\13\1\11\1\15\1\23\1\25\1\4\1\26\1\4\1\10\2\4"+
+    "\1\16\1\4\1\24\1\22\2\4\1\12\1\17\1\20\1\4\1\21"+
+    "\2\4\1\14\1\4\1\35\1\0\1\36\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uff92\0";
 
   /** 
    * Translates characters to character classes
@@ -57,13 +57,14 @@ public class LibLexer implements java_cup.runtime.Scanner {
   private static final int [] ZZ_ACTION = zzUnpackAction();
 
   private static final String ZZ_ACTION_PACKED_0 =
-    "\3\0\1\1\2\2\1\3\1\4\5\3\1\5\1\6"+
+    "\3\0\1\1\2\2\1\3\2\4\5\3\1\5\1\6"+
     "\1\7\1\10\1\11\1\12\1\13\1\14\1\1\3\15"+
-    "\1\16\5\3\1\17\1\20\3\3\1\21\5\3\1\22"+
-    "\1\3\1\23\3\3\1\24\1\25\1\3\1\26";
+    "\1\16\1\4\5\3\1\17\1\20\1\4\1\21\5\3"+
+    "\1\4\4\3\1\22\1\4\1\3\1\23\2\3\1\4"+
+    "\1\3\1\24\1\25\1\26\1\27";
 
   private static int [] zzUnpackAction() {
-    int [] result = new int[52];
+    int [] result = new int[59];
     int offset = 0;
     offset = zzUnpackAction(ZZ_ACTION_PACKED_0, offset, result);
     return result;
@@ -88,16 +89,17 @@ public class LibLexer implements java_cup.runtime.Scanner {
   private static final int [] ZZ_ROWMAP = zzUnpackRowMap();
 
   private static final String ZZ_ROWMAP_PACKED_0 =
-    "\0\0\0\37\0\76\0\135\0\174\0\135\0\233\0\272"+
-    "\0\331\0\370\0\u0117\0\u0136\0\u0155\0\135\0\135\0\135"+
-    "\0\135\0\135\0\135\0\135\0\135\0\u0174\0\135\0\u0193"+
-    "\0\u01b2\0\135\0\u01d1\0\u01f0\0\u020f\0\u022e\0\u024d\0\135"+
-    "\0\135\0\u026c\0\u028b\0\u02aa\0\233\0\u02c9\0\u02e8\0\u0307"+
-    "\0\u0326\0\u0345\0\233\0\u0364\0\233\0\u0383\0\u03a2\0\u03c1"+
-    "\0\233\0\233\0\u03e0\0\233";
+    "\0\0\0\41\0\102\0\143\0\204\0\143\0\245\0\306"+
+    "\0\347\0\u0108\0\u0129\0\u014a\0\u016b\0\u018c\0\143\0\143"+
+    "\0\143\0\143\0\143\0\143\0\143\0\143\0\u01ad\0\143"+
+    "\0\u01ce\0\u01ef\0\143\0\u0210\0\u0231\0\u0252\0\u0273\0\u0294"+
+    "\0\u02b5\0\143\0\143\0\u02d6\0\245\0\u02f7\0\u0318\0\u0339"+
+    "\0\u035a\0\u037b\0\u039c\0\u03bd\0\u03de\0\u03ff\0\u0420\0\245"+
+    "\0\u0441\0\u0462\0\245\0\u0483\0\u04a4\0\u04c5\0\u04e6\0\245"+
+    "\0\245\0\306\0\245";
 
   private static int [] zzUnpackRowMap() {
-    int [] result = new int[52];
+    int [] result = new int[59];
     int offset = 0;
     offset = zzUnpackRowMap(ZZ_ROWMAP_PACKED_0, offset, result);
     return result;
@@ -120,27 +122,30 @@ public class LibLexer implements java_cup.runtime.Scanner {
   private static final int [] ZZ_TRANS = zzUnpackTrans();
 
   private static final String ZZ_TRANS_PACKED_0 =
-    "\1\4\1\5\2\6\1\7\1\10\1\4\1\11\2\7"+
-    "\1\12\1\7\1\13\1\14\3\7\1\15\3\7\1\16"+
+    "\1\4\1\5\2\6\1\7\1\10\1\4\1\11\1\12"+
+    "\1\13\3\7\1\14\1\7\1\15\1\7\1\16\5\7"+
     "\1\17\1\20\1\21\1\22\1\23\1\24\1\25\1\26"+
-    "\1\4\36\27\1\30\1\27\1\31\1\32\34\27\41\0"+
-    "\1\6\40\0\21\7\16\0\21\10\16\0\4\7\1\33"+
-    "\14\7\16\0\7\7\1\34\11\7\16\0\14\7\1\35"+
-    "\4\7\16\0\12\7\1\36\6\7\16\0\12\7\1\37"+
-    "\6\7\47\0\1\40\1\41\35\0\1\32\3\0\1\32"+
-    "\40\0\5\7\1\42\13\7\16\0\5\7\1\43\11\7"+
-    "\1\44\1\7\16\0\7\7\1\45\11\7\16\0\10\7"+
-    "\1\46\10\7\16\0\12\7\1\47\6\7\16\0\6\7"+
-    "\1\50\12\7\16\0\7\7\1\51\11\7\16\0\10\7"+
-    "\1\52\10\7\16\0\13\7\1\53\5\7\16\0\4\7"+
-    "\1\54\14\7\16\0\6\7\1\55\12\7\16\0\10\7"+
-    "\1\56\10\7\16\0\14\7\1\57\4\7\16\0\16\7"+
-    "\1\60\2\7\16\0\3\7\1\61\15\7\16\0\20\7"+
-    "\1\62\16\0\5\7\1\63\13\7\16\0\14\7\1\64"+
-    "\4\7\12\0";
+    "\1\27\1\4\40\30\1\31\1\30\1\32\1\33\36\30"+
+    "\43\0\1\6\42\0\23\7\16\0\23\10\16\0\4\10"+
+    "\1\34\16\10\16\0\20\7\1\35\2\7\16\0\16\7"+
+    "\1\36\4\7\16\0\12\7\1\37\10\7\16\0\14\7"+
+    "\1\40\6\7\16\0\16\7\1\41\4\7\51\0\1\42"+
+    "\1\43\37\0\1\33\3\0\1\33\42\0\5\10\1\44"+
+    "\15\10\16\0\14\7\1\45\6\7\16\0\16\7\1\46"+
+    "\4\7\16\0\7\7\1\47\13\7\16\0\6\7\1\50"+
+    "\1\51\13\7\16\0\4\7\1\52\16\7\16\0\6\10"+
+    "\1\53\14\10\16\0\12\7\1\54\10\7\16\0\13\7"+
+    "\1\55\7\7\16\0\4\7\1\56\16\7\16\0\14\7"+
+    "\1\57\6\7\16\0\17\7\1\60\3\7\16\0\7\10"+
+    "\1\61\13\10\16\0\21\7\1\62\1\7\16\0\13\7"+
+    "\1\63\7\7\16\0\20\7\1\64\2\7\16\0\4\7"+
+    "\1\65\16\7\16\0\6\10\1\66\14\10\16\0\7\7"+
+    "\1\67\13\7\16\0\22\7\1\70\16\0\11\7\1\71"+
+    "\11\7\16\0\10\10\1\72\12\10\16\0\20\7\1\73"+
+    "\2\7\12\0";
 
   private static int [] zzUnpackTrans() {
-    int [] result = new int[1023];
+    int [] result = new int[1287];
     int offset = 0;
     offset = zzUnpackTrans(ZZ_TRANS_PACKED_0, offset, result);
     return result;
@@ -178,11 +183,11 @@ public class LibLexer implements java_cup.runtime.Scanner {
   private static final int [] ZZ_ATTRIBUTE = zzUnpackAttribute();
 
   private static final String ZZ_ATTRIBUTE_PACKED_0 =
-    "\3\0\1\11\1\1\1\11\7\1\10\11\1\1\1\11"+
-    "\2\1\1\11\5\1\2\11\23\1";
+    "\3\0\1\11\1\1\1\11\10\1\10\11\1\1\1\11"+
+    "\2\1\1\11\6\1\2\11\30\1";
 
   private static int [] zzUnpackAttribute() {
-    int [] result = new int[52];
+    int [] result = new int[59];
     int offset = 0;
     offset = zzUnpackAttribute(ZZ_ATTRIBUTE_PACKED_0, offset, result);
     return result;
@@ -289,7 +294,7 @@ public class LibLexer implements java_cup.runtime.Scanner {
     char [] map = new char[0x110000];
     int i = 0;  /* index in packed string  */
     int j = 0;  /* index in unpacked array */
-    while (i < 138) {
+    while (i < 146) {
       int  count = packed.charAt(i++);
       char value = packed.charAt(i++);
       do map[j++] = value; while (--count > 0);
@@ -648,91 +653,95 @@ public class LibLexer implements java_cup.runtime.Scanner {
         case 1: 
           { throw new LexicalError(yytext(), yyline+1, yycolumn+1);
           }
-        case 23: break;
+        case 24: break;
         case 2: 
           { /* ignore */
           }
-        case 24: break;
+        case 25: break;
         case 3: 
           { return token(Libsym.ID, yytext());
           }
-        case 25: break;
+        case 26: break;
         case 4: 
           { return token(Libsym.CLASS_ID, yytext());
           }
-        case 26: break;
+        case 27: break;
         case 5: 
           { return token(Libsym.SEMICOLON, yytext());
           }
-        case 27: break;
+        case 28: break;
         case 6: 
           { return token(Libsym.COMMA, yytext());
           }
-        case 28: break;
+        case 29: break;
         case 7: 
           { return token(Libsym.LP, yytext());
           }
-        case 29: break;
+        case 30: break;
         case 8: 
           { return token(Libsym.RP, yytext());
           }
-        case 30: break;
+        case 31: break;
         case 9: 
           { return token(Libsym.LC, yytext());
           }
-        case 31: break;
+        case 32: break;
         case 10: 
           { return token(Libsym.RC, yytext());
           }
-        case 32: break;
+        case 33: break;
         case 11: 
           { return token(Libsym.LB, yytext());
           }
-        case 33: break;
+        case 34: break;
         case 12: 
           { return token(Libsym.RB, yytext());
           }
-        case 34: break;
+        case 35: break;
         case 13: 
           { 
           }
-        case 35: break;
+        case 36: break;
         case 14: 
           { yybegin(YYINITIAL);
           }
-        case 36: break;
+        case 37: break;
         case 15: 
           { yybegin(LCOMMENTS);
           }
-        case 37: break;
+        case 38: break;
         case 16: 
           { yybegin(BCOMMENTS);
           }
-        case 38: break;
+        case 39: break;
         case 17: 
           { return token(Libsym.INT_KEYWORD, yytext());
           }
-        case 39: break;
+        case 40: break;
         case 18: 
           { return token(Libsym.VOID_KEYWORD, yytext());
           }
-        case 40: break;
+        case 41: break;
         case 19: 
           { return token(Libsym.CLASS_KEYWORD, yytext());
           }
-        case 41: break;
-        case 20: 
-          { return token(Libsym.STATIC_KEYWORD, yytext());
-          }
         case 42: break;
-        case 21: 
+        case 20: 
           { return token(Libsym.STRING_KEYWORD, yytext());
           }
         case 43: break;
-        case 22: 
-          { return token(Libsym.BOOLEAN_KEYWORD, yytext());
+        case 21: 
+          { return token(Libsym.STATIC_KEYWORD, yytext());
           }
         case 44: break;
+        case 22: 
+          { return token(Libsym.LIBRARY_KEYWORD, yytext());
+          }
+        case 45: break;
+        case 23: 
+          { return token(Libsym.BOOLEAN_KEYWORD, yytext());
+          }
+        case 46: break;
         default: 
           if (zzInput == YYEOF && zzStartRead == zzCurrentPos) {
             zzAtEOF = true;

@@ -47,24 +47,24 @@ public class LibParser extends java_cup.runtime.lr_parser {
   protected static final short[][] _action_table = 
     unpackFromStrings(new String[] {
     "\000\041\000\004\011\006\001\002\000\004\002\043\001" +
-    "\002\000\004\002\001\001\002\000\004\012\007\001\002" +
-    "\000\004\016\010\001\002\000\006\013\ufffd\017\ufffd\001" +
-    "\002\000\006\013\012\017\013\001\002\000\014\004\023" +
+    "\002\000\004\002\001\001\002\000\004\013\007\001\002" +
+    "\000\004\017\010\001\002\000\006\014\ufffd\020\ufffd\001" +
+    "\002\000\006\014\012\020\013\001\002\000\014\004\023" +
     "\005\015\006\016\007\017\012\020\001\002\000\004\002" +
-    "\uffff\001\002\000\006\013\ufffe\017\ufffe\001\002\000\006" +
-    "\010\ufff8\020\ufff8\001\002\000\006\010\ufff7\020\ufff7\001" +
-    "\002\000\006\010\ufff6\020\ufff6\001\002\000\006\010\ufff5" +
-    "\020\ufff5\001\002\000\006\010\ufffa\020\035\001\002\000" +
+    "\uffff\001\002\000\006\014\ufffe\020\ufffe\001\002\000\006" +
+    "\010\ufff8\021\ufff8\001\002\000\006\010\ufff7\021\ufff7\001" +
+    "\002\000\006\010\ufff6\021\ufff6\001\002\000\006\010\ufff5" +
+    "\021\ufff5\001\002\000\006\010\ufffa\021\035\001\002\000" +
     "\004\010\024\001\002\000\004\010\ufffb\001\002\000\004" +
-    "\014\025\001\002\000\014\005\015\006\016\007\017\012" +
-    "\020\015\ufff4\001\002\000\004\015\ufff3\001\002\000\006" +
-    "\015\ufff1\022\037\001\002\000\006\010\034\020\035\001" +
-    "\002\000\004\015\032\001\002\000\004\023\033\001\002" +
-    "\000\006\013\ufffc\017\ufffc\001\002\000\006\015\uffef\022" +
-    "\uffef\001\002\000\004\021\036\001\002\000\006\010\ufff9" +
-    "\020\ufff9\001\002\000\012\005\015\006\016\007\017\012" +
-    "\020\001\002\000\004\015\ufff2\001\002\000\006\015\ufff1" +
-    "\022\037\001\002\000\004\015\ufff0\001\002\000\004\002" +
+    "\015\025\001\002\000\014\005\015\006\016\007\017\012" +
+    "\020\016\ufff4\001\002\000\004\016\ufff3\001\002\000\006" +
+    "\016\ufff1\023\037\001\002\000\006\010\034\021\035\001" +
+    "\002\000\004\016\032\001\002\000\004\024\033\001\002" +
+    "\000\006\014\ufffc\020\ufffc\001\002\000\006\016\uffef\023" +
+    "\uffef\001\002\000\004\022\036\001\002\000\006\010\ufff9" +
+    "\021\ufff9\001\002\000\012\005\015\006\016\007\017\012" +
+    "\020\001\002\000\004\016\ufff2\001\002\000\006\016\ufff1" +
+    "\023\037\001\002\000\004\016\ufff0\001\002\000\004\002" +
     "\000\001\002" });
 
   /** Access to parse-action table. */
@@ -203,7 +203,7 @@ class CUP$LibParser$actions {
           return CUP$LibParser$result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 2: // libic ::= CLASS_KEYWORD CLASS_ID LB libmethod_list RB 
+          case 2: // libic ::= CLASS_KEYWORD LIBRARY_KEYWORD LB libmethod_list RB 
             {
               ICClass RESULT =null;
 		int ckleft = ((java_cup.runtime.Symbol)CUP$LibParser$stack.elementAt(CUP$LibParser$top-4)).left;
@@ -215,9 +215,8 @@ class CUP$LibParser$actions {
 		int mlleft = ((java_cup.runtime.Symbol)CUP$LibParser$stack.elementAt(CUP$LibParser$top-1)).left;
 		int mlright = ((java_cup.runtime.Symbol)CUP$LibParser$stack.elementAt(CUP$LibParser$top-1)).right;
 		List<Method> ml = (List<Method>)((java_cup.runtime.Symbol) CUP$LibParser$stack.elementAt(CUP$LibParser$top-1)).value;
-		 if(cid.toString().equals("Library")) 
-			{ RESULT = new ICClass(ckleft, cid.toString(), new ArrayList<Field>(),
-			ml); } else { RESULT = null; } 
+		 RESULT = new ICClass(ckleft, cid.toString(), new ArrayList<Field>(),
+			ml); 
               CUP$LibParser$result = parser.getSymbolFactory().newSymbol("libic",1, ((java_cup.runtime.Symbol)CUP$LibParser$stack.elementAt(CUP$LibParser$top-4)), ((java_cup.runtime.Symbol)CUP$LibParser$stack.peek()), RESULT);
             }
           return CUP$LibParser$result;

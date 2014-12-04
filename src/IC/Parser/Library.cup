@@ -35,7 +35,7 @@ scan with {:
 /* Terminals (tokens returned by the scanner). */
 terminal			VOID_KEYWORD, INT_KEYWORD, BOOLEAN_KEYWORD, STRING_KEYWORD;
 terminal			ID;
-terminal			CLASS_KEYWORD, CLASS_ID, STATIC_KEYWORD;
+terminal			CLASS_KEYWORD, CLASS_ID, LIBRARY_KEYWORD, STATIC_KEYWORD;
 terminal            LP, RP, LB, RB, LC, RC, COMMA, SEMICOLON;
 
 /* Non terminals */
@@ -56,10 +56,9 @@ program ::= libic:lib
 		{: List<ICClass> list = new ArrayList<ICClass>(); list.add(lib); RESULT = new Program(list); :}
 ;
 
-libic ::= CLASS_KEYWORD:ck CLASS_ID:cid LB libmethod_list:ml RB
-		{: if(cid.toString().equals("Library")) 
-			{ RESULT = new ICClass(ckleft, cid.toString(), new ArrayList<Field>(),
-			ml); } else { RESULT = null; } :}
+libic ::= CLASS_KEYWORD:ck LIBRARY_KEYWORD:cid LB libmethod_list:ml RB
+		{: RESULT = new ICClass(ckleft, cid.toString(), new ArrayList<Field>(),
+			ml); :}
 ;
 
 
