@@ -611,11 +611,6 @@ public class Parser extends java_cup.runtime.lr_parser {
 		this.lexer = lexer;
 	}
 	
-	public void syntax_error_old(Symbol s) {
-		Token tok = (Token) s;
-		System.out.println("" + tok.getLine()+":"+tok.getColumn()+" : Syntax error; unexpected " + tok);
-	}
-	
 	public void syntax_error(Symbol s)
 	{	
         StringBuilder sb = new StringBuilder();
@@ -652,6 +647,15 @@ public class Parser extends java_cup.runtime.lr_parser {
         }
 	}
 	
+	public void report_error(String message, Object info)
+	{
+	
+	}
+	
+	public void unrecovered_syntax_error(Symbol cur_token)
+	{
+	
+	}
 	
 	protected class ClassLines
 	{
