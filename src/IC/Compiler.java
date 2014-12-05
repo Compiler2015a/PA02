@@ -56,10 +56,10 @@ public class Compiler {
 		} catch (FileNotFoundException e) {
 			System.out.println(e);
 		} catch (LexicalError e) {
-			System.out.println(e.getLine() + ":" + e.getColumn()  + " : lexical error; " + e.getMessage());
+			new LexicalError(e.getMessage(), e.getLine(), e.getColumn()).toString();
 		} catch (SyntaxError e) {
 			if (e.getLine() > 0)
-                System.out.println(e.getLine() + ":" + e.getColumn()  + " : syntax error; " + e.getMessage());
+				new SyntaxError(e.getMessage(), e.getLine(), e.getColumn()).toString();
             else
                 System.out.println("at end of input : syntax error; " + e.getMessage());
 		} catch (Exception e) {

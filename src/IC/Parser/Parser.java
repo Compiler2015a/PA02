@@ -629,12 +629,12 @@ public class Parser extends java_cup.runtime.lr_parser {
                     sb.append(" or ");
                 else
                     isFirst = false;
-                
                 sb.append('\'');
                 sb.append(sym.terminalNames[expected]);
-                //System.out.println("$"+new Token(expected, sym.terminalNames[expected], token.getLine(), token.getColumn()).getTag());
-                sb.append('\'');
                 
+                //System.out.println("*"+symbl_name_from_id(expected)+"\n"); //we can use this 
+                //line too but it throws unclear exception every couple of runs
+                sb.append('\'');
             }
         } else {
             sb.append("end of input");
