@@ -14,7 +14,7 @@ import IC.Parser.LexicalError;
 %column
 %{
   StringBuffer string = new StringBuffer();
-
+  
   private Token token(int type, Object value) {
     return new Token(type, value, yyline+1, yycolumn+1);
   }

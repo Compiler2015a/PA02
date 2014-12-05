@@ -8,7 +8,12 @@ package IC.Parser;
 import java.util.ArrayList;
 import java.util.List;
 
+import sun.security.jgss.TokenTracker;
+import java_cup.parser;
+import java_cup.symbol_part;
 import java_cup.runtime.Symbol;
+import java_cup.runtime.SymbolFactory;
+import java_cup.runtime.lr_parser;
 import IC.DataTypes;
 import IC.UnaryOps;
 import IC.AST.ArrayLocation;
@@ -626,10 +631,11 @@ public class Parser extends java_cup.runtime.lr_parser {
                     isFirst = false;
                 sb.append('\'');
                 sb.append(sym.terminalNames[expected]);
-                
+                //new Parser().getSymbolContainer().
                 //System.out.println("*"+symbl_name_from_id(expected)+"\n"); //we can use this 
                 //line too but it throws unclear exception every couple of runs
                 sb.append('\'');
+                
             }
         } else {
             sb.append("end of input");
@@ -656,6 +662,20 @@ public class Parser extends java_cup.runtime.lr_parser {
 	{
 	
 	}
+	
+    public boolean inIntRange(String str) {
+        boolean isNegative = str.charAt(0) == '-';
+        if (isNegative)
+            str = str.substring(1);
+        if (str.length() > 10)
+            return false;
+        if (str.length() == 10) {
+            int comp = str.compareTo("2147483648");
+            if (comp > 0 || (!isNegative && comp == 0))
+                return false;
+        }
+        return true;
+    }
 	
 	protected class ClassLines
 	{
