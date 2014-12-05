@@ -9,6 +9,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import java_cup.runtime.Symbol;
+import IC.DataTypes;
+import IC.UnaryOps;
 import IC.AST.ArrayLocation;
 import IC.AST.Assignment;
 import IC.AST.Break;
@@ -609,10 +611,47 @@ public class Parser extends java_cup.runtime.lr_parser {
 		this.lexer = lexer;
 	}
 	
-	public void syntax_error(Symbol s) {
+	public void syntax_error_old(Symbol s) {
 		Token tok = (Token) s;
 		System.out.println("" + tok.getLine()+":"+tok.getColumn()+" : Syntax error; unexpected " + tok);
 	}
+	
+	public void syntax_error(Symbol s)
+	{	
+        StringBuilder sb = new StringBuilder();
+        Token token = (Token)s;
+        sb.append("expected ");
+        
+        if (s.right > 0) {
+            boolean isFirst = true;
+            for (Integer expected : expected_token_ids()) {
+                if (!isFirst)
+                    sb.append(" or ");
+                else
+                    isFirst = false;
+                
+                sb.append('\'');
+                sb.append(sym.terminalNames[expected]);
+                //System.out.println("$"+new Token(expected, sym.terminalNames[expected], token.getLine(), token.getColumn()).getTag());
+                sb.append('\'');
+                
+            }
+        } else {
+            sb.append("end of input");
+        }
+        if (token == null)
+        {
+            //throw new SyntaxError(sb.toString(), 0, 0);
+        	System.out.println("0:0 : Syntax error; " + sb.toString());
+        } else {
+            sb.append(", but found \'");
+            sb.append(token.getTag());
+            sb.append('\''); 
+            //throw new SyntaxError(sb.toString(), token.getLine(), token.getColumn());
+            System.out.println("" +token.getLine()+":"+token.getColumn()+" : Syntax error; " + sb.toString());
+        }
+	}
+	
 	
 	protected class ClassLines
 	{

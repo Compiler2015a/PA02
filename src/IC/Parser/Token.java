@@ -29,6 +29,7 @@ public class Token extends Symbol {
 				return "INTEGER";
 			case IC.Parser.sym.STRING_LITERAL:
 				return "STRING";
+				
 		}
 		
 		return value.toString();

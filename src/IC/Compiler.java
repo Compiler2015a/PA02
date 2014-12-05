@@ -11,6 +11,7 @@ import IC.Parser.LexicalError;
 import IC.Parser.LibLexer;
 import IC.Parser.LibParser;
 import IC.Parser.Parser;
+import IC.Parser.SyntaxError;;
 
 public class Compiler {
 
@@ -55,9 +56,14 @@ public class Compiler {
 		} catch (FileNotFoundException e) {
 			System.out.println(e);
 		} catch (LexicalError e) {
-			System.out.println(e);
+			System.out.println(e.getLine() + ":" + e.getColumn()  + " : lexical error; " + e.getMessage());
+		} catch (SyntaxError e) {
+			if (e.getLine() > 0)
+                System.out.println(e.getLine() + ":" + e.getColumn()  + " : syntax error; " + e.getMessage());
+            else
+                System.out.println("at end of input : syntax error; " + e.getMessage());
 		} catch (Exception e) {
-			e.printStackTrace();
+			//e.printStackTrace();
 		}
 	}
 }
