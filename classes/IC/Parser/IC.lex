@@ -14,28 +14,19 @@ import IC.Parser.LexicalError;
 %column
 %{
   StringBuffer string = new StringBuffer();
-
+  
   private Token token(int type, Object value) {
     return new Token(type, value, yyline+1, yycolumn+1);
   }
   
   private Token stringToken(int type, String value) {
-	return new Token(type, value, yyline+1, yycolumn+2-value.length());
+	return new Token(type, value, yyline+1, yycolumn-value.length());
   }
   
 %}
  LineTerminator = \r|\n|\r\n
-InputCharacter = [^\r\n]
+
 WhiteSpace     = {LineTerminator} | [ \t\f]
-
-/* comments */
-Comment = {TraditionalComment} | {EndOfLineComment} | {DocumentationComment}
-
-TraditionalComment   = "/*" [^*] ~"*/" | "/*" "*"+ "/"
-// Comment can be the last line of the file, without line terminator.
-EndOfLineComment     = "//" {InputCharacter}* {LineTerminator}?
-DocumentationComment = "/**" {CommentContent} "*"+ "/"
-CommentContent       = ( [^*] | \*+ [^/*] )*
 
 Lowercase = [a-z]
 Uppercase = [A-Z]
@@ -46,6 +37,8 @@ Identifier = {Lowercase}({Letters} | {DecIntegerLiteral} | _)*
 
 DecIntegerLiteral = 0+ | [1-9][0-9]*
 %state STRING
+%state BCOMMENTS
+%state LCOMMENTS
 
 %%
  /* keywords */
@@ -76,7 +69,7 @@ DecIntegerLiteral = 0+ | [1-9][0-9]*
   "true"           				 { return token(sym.TRUE_LITERAL, yytext()); }
   "false"           			 { return token(sym.FALSE_LITERAL, yytext()); }
   "null"           				 { return token(sym.NULL_LITERAL, yytext()); }
-  \"                             { string.setLength(0); string.append("\""); yybegin(STRING); }
+  \"                             { string.setLength(0); yybegin(STRING); }
 
   /* identifiers */ 
   {ClassIdentifier}              { return token(sym.CLASS_ID, yytext()); }	
@@ -110,26 +103,38 @@ DecIntegerLiteral = 0+ | [1-9][0-9]*
  
  <YYINITIAL> {
   /* comments */
-  {Comment}                      { /* ignore */ }
+  
+  "//" 							 { yybegin(LCOMMENTS); }
+
+  "/*" 							 { yybegin(BCOMMENTS); }
+
  
   /* whitespace */
   {WhiteSpace}                   { /* ignore */ }
 }
 
+ <LCOMMENTS> {
+  ["\r"]?["\n"] 			  		 { yybegin(YYINITIAL); }
+  [^\n] 							 { }
+}
+
+ <BCOMMENTS> {
+  "*/"  						 { yybegin(YYINITIAL); }
+  [^]							 {}
+}
+ 
  <STRING> {
   \"                             { yybegin(YYINITIAL); 
-								   string.append("\"");
                                    return stringToken(sym.STRING_LITERAL, 
                                    string.toString()); }
-  [^\n\r\"\\]+                   { string.append( yytext() ); }
-  \\t                            { string.append("\\t"); }
-  \\n                            { string.append("\\n"); }
-
-  \\r                            { string.append("\\r"); }
-  \\\"                           { string.append("\\\""); }
-  \\                             { string.append('\\'); }
+  [^\n\r\"\t\\]+                   { string.append( yytext() ); }
+  \\n                            { string.append("\n"); }
+  \\t                            { string.append("\t"); }
+  \\r                            { string.append("\r"); }
+  \\\"                           { string.append("\""); }
+  \\                             { string.append("\\"); }
   
-  \n							 { throw new LexicalError(yytext(), yyline+1, yycolumn+1); } /* unclosed literal string */ 
+  LineTerminator				 { throw new LexicalError(yytext(), yyline+1, yycolumn+1); } /* unclosed literal string */ 
 }
 
 

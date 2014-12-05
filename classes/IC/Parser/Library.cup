@@ -1,4 +1,4 @@
-package IC.Parser.Library;
+package IC.Parser;
 import IC.Parser.Token;
 import java_cup.runtime.*;
 import IC.AST.*;
@@ -13,17 +13,58 @@ parser code  {:
 	 */
 	public boolean printTokens;
 	
-	private Lexer lexer;
+	private LibLexer lexer;
 	private int arrayDimentionCounter = 0;
 	
-	public LibParser(Lexer lexer) {
+	public LibParser(LibLexer lexer) {
 		super(lexer);
 		this.lexer = lexer;
 	}
 	
-	public void syntax_error(Symbol s) {
-		Token tok = (Token) s;
-		System.out.println("" + tok.getLine()+":"+tok.getColumn()+" : Syntax error; unexpected " + tok);
+		public void syntax_error(Symbol s)
+	{
+        StringBuilder sb = new StringBuilder();
+        Token token = (Token)s;
+        sb.append("expected ");
+        
+        if (s.right > 0) {
+            boolean isFirst = true;
+            expected_token_ids();
+            expected_token_ids();
+            for (Integer expected : expected_token_ids()) {
+                if (!isFirst)
+                    sb.append(" or ");
+                else
+                    isFirst = false;
+
+                sb.append('\'');
+                sb.append(sym.terminalNames[expected]);
+                sb.append('\'');
+            }
+        } else {
+            sb.append("end of input");
+        }
+        if (token == null)
+        {
+            //throw new SyntaxError(sb.toString(), 0, 0);
+        	 System.out.println("0:0 : Syntax error; " + sb.toString());
+        } else {
+            sb.append(", but found \'");
+            sb.append(token.getTag());
+            sb.append('\''); 
+            //throw new SyntaxError(sb.toString(), token.getLine(), token.getColumn());
+            System.out.println("" +token.getLine()+":"+token.getColumn()+" : Syntax error; " + sb.toString());
+        }
+	}
+	
+	public void report_error(String message, Object info)
+	{
+	
+	}
+	
+	public void unrecovered_syntax_error(Symbol cur_token)
+	{
+	
 	}
 :}
 
@@ -35,7 +76,7 @@ scan with {:
 /* Terminals (tokens returned by the scanner). */
 terminal			VOID_KEYWORD, INT_KEYWORD, BOOLEAN_KEYWORD, STRING_KEYWORD;
 terminal			ID;
-terminal			CLASS_KEYWORD, CLASS_ID, STATIC_KEYWORD;
+terminal			CLASS_KEYWORD, CLASS_ID, LIBRARY_KEYWORD, STATIC_KEYWORD;
 terminal            LP, RP, LB, RB, LC, RC, COMMA, SEMICOLON;
 
 /* Non terminals */
@@ -56,10 +97,9 @@ program ::= libic:lib
 		{: List<ICClass> list = new ArrayList<ICClass>(); list.add(lib); RESULT = new Program(list); :}
 ;
 
-libic ::= CLASS_KEYWORD:ck CLASS_ID:cid LB libmethod_list:ml RB
-		{: if(cid.toString().equals("Library")) 
-			{ RESULT = new ICClass(ckleft, cid.toString(), null,
-			ml); } else { RESULT = null; } :}
+libic ::= CLASS_KEYWORD:ck LIBRARY_KEYWORD:cid LB libmethod_list:ml RB
+		{: RESULT = new ICClass(ckleft, cid.toString(), new ArrayList<Field>(),
+			ml); :}
 ;
 
 
