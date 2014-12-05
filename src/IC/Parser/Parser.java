@@ -589,7 +589,7 @@ public class Parser extends java_cup.runtime.lr_parser {
                     isFirst = false;
 
                 sb.append('\'');
-                sb.append(expected);
+                sb.append(sym.terminalNames[expected]);
                 sb.append('\'');
             }
         } else {

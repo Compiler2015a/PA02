@@ -33,7 +33,7 @@ parser code  {:
                     isFirst = false;
 
                 sb.append('\'');
-                sb.append(expected);
+                sb.append(sym.terminalNames[expected]);
                 sb.append('\'');
             }
         } else {
