@@ -62,6 +62,19 @@ parser code  {:
 	
 	}
 	
+    public boolean inIntRange(String str) {
+	    boolean isNegative = str.charAt(0) == '-';
+	    if (isNegative)
+	        str = str.substring(1);
+	    if (str.length() > 10)
+	        return false;
+	    if (str.length() == 10) {
+	        int comp = str.compareTo("2147483648");
+	        if (comp > 0 || (!isNegative && comp == 0))
+	            return false;
+	    }
+	    return true;
+    }
 	
 	protected class ClassLines
 	{

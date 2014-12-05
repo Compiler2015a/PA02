@@ -5,53 +5,11 @@
 
 package IC.Parser;
 
+import java_cup.runtime.*;
 import java.util.ArrayList;
 import java.util.List;
-
-import sun.security.jgss.TokenTracker;
-import java_cup.parser;
-import java_cup.symbol_part;
-import java_cup.runtime.Symbol;
-import java_cup.runtime.SymbolFactory;
-import java_cup.runtime.lr_parser;
-import IC.DataTypes;
-import IC.UnaryOps;
-import IC.AST.ArrayLocation;
-import IC.AST.Assignment;
-import IC.AST.Break;
-import IC.AST.Call;
-import IC.AST.CallStatement;
-import IC.AST.Continue;
-import IC.AST.Expression;
-import IC.AST.Field;
-import IC.AST.Formal;
-import IC.AST.ICClass;
-import IC.AST.If;
-import IC.AST.Length;
-import IC.AST.Literal;
-import IC.AST.LocalVariable;
-import IC.AST.Location;
-import IC.AST.LogicalBinaryOp;
-import IC.AST.LogicalUnaryOp;
-import IC.AST.MathBinaryOp;
-import IC.AST.MathUnaryOp;
-import IC.AST.Method;
-import IC.AST.NewArray;
-import IC.AST.NewClass;
-import IC.AST.PrimitiveType;
-import IC.AST.Program;
-import IC.AST.Return;
-import IC.AST.Statement;
-import IC.AST.StatementsBlock;
-import IC.AST.StaticCall;
-import IC.AST.StaticMethod;
-import IC.AST.This;
-import IC.AST.Type;
-import IC.AST.UserType;
-import IC.AST.VariableLocation;
-import IC.AST.VirtualCall;
-import IC.AST.VirtualMethod;
-import IC.AST.While;
+import IC.AST.*;
+import java_cup.runtime.XMLElement;
 
 /** CUP v0.11b 20140808 (SVN rev 54) generated parser.
   */
@@ -617,7 +575,7 @@ public class Parser extends java_cup.runtime.lr_parser {
 	}
 	
 	public void syntax_error(Symbol s)
-	{	
+	{
         StringBuilder sb = new StringBuilder();
         Token token = (Token)s;
         sb.append("expected ");
@@ -629,13 +587,10 @@ public class Parser extends java_cup.runtime.lr_parser {
                     sb.append(" or ");
                 else
                     isFirst = false;
+
                 sb.append('\'');
-                sb.append(sym.terminalNames[expected]);
-                //new Parser().getSymbolContainer().
-                //System.out.println("*"+symbl_name_from_id(expected)+"\n"); //we can use this 
-                //line too but it throws unclear exception every couple of runs
+                sb.append(expected);
                 sb.append('\'');
-                
             }
         } else {
             sb.append("end of input");
@@ -643,7 +598,7 @@ public class Parser extends java_cup.runtime.lr_parser {
         if (token == null)
         {
             //throw new SyntaxError(sb.toString(), 0, 0);
-        	System.out.println("0:0 : Syntax error; " + sb.toString());
+        	 System.out.println("0:0 : Syntax error; " + sb.toString());
         } else {
             sb.append(", but found \'");
             sb.append(token.getTag());
@@ -664,17 +619,17 @@ public class Parser extends java_cup.runtime.lr_parser {
 	}
 	
     public boolean inIntRange(String str) {
-        boolean isNegative = str.charAt(0) == '-';
-        if (isNegative)
-            str = str.substring(1);
-        if (str.length() > 10)
-            return false;
-        if (str.length() == 10) {
-            int comp = str.compareTo("2147483648");
-            if (comp > 0 || (!isNegative && comp == 0))
-                return false;
-        }
-        return true;
+	    boolean isNegative = str.charAt(0) == '-';
+	    if (isNegative)
+	        str = str.substring(1);
+	    if (str.length() > 10)
+	        return false;
+	    if (str.length() == 10) {
+	        int comp = str.compareTo("2147483648");
+	        if (comp > 0 || (!isNegative && comp == 0))
+	            return false;
+	    }
+	    return true;
     }
 	
 	protected class ClassLines
