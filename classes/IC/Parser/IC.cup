@@ -294,7 +294,7 @@ expr ::=	location:l {: RESULT = l; :} | call:c {: RESULT = c; :} |
 			{: RESULT = new LogicalUnaryOp(uOp, exp); :} | 
 			mathunop:uOp expr:exp
 			{: RESULT = new MathUnaryOp(uOp, exp); :} | 
-			literal:l {: RESULT = l; :} | LP expr:exp RP {: RESULT = exp; :}
+			literal:l {: RESULT = l; :} | LP expr:exp RP {: RESULT = new ExpressionBlock(exp); :}
 ;
 	
 call ::=	staticCall:sc {: RESULT = sc; :} | virtualCall:vc {: RESULT = vc; :};
