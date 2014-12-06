@@ -33,12 +33,8 @@ public class Compiler {
 			// Pretty-print the program to System.out
 			//	PrettyPrinter printer = new PrettyPrinter(args[1].substring(2));
 			//	System.out.println(printer.visit(libRoot));
-
-				
 			}
-			
 
-			
 			//parse IC file
 			FileReader icFile = new FileReader(args[0]);
 
@@ -50,7 +46,7 @@ public class Compiler {
 			
 			System.out.println("Parsed " + args[0] +" successfully!");
 			
-	//		 Pretty-print the program to System.out
+			//Pretty-print the program to System.out
 			PrettyPrinter printer = new PrettyPrinter(args[0]);
 			System.out.println(printer.visit(ICRoot));
 

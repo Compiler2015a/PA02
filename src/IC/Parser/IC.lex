@@ -141,4 +141,9 @@ DecIntegerLiteral = 0+ | [1-9][0-9]*
  /* error fallback */
 	[^]                              { throw new LexicalError(yytext(), yyline+1, yycolumn+1); }
 	
-<<EOF>> 	{ return token(sym.EOF, "EOF"); }
+<<EOF>> 	
+{ 
+	if (yystate() == BCOMMENTS)
+		throw new LexicalError("Unexpected end of comment", yyline+1, yycolumn+1);
+	return token(sym.EOF, "EOF"); 
+}
