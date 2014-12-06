@@ -1,3 +1,7 @@
+Parsed Quicksort.ic successfully!
+
+Abstract Syntax Tree: Quicksort.ic
+
 15: Declaration of class: Quicksort
   16: Declaration of field: a
    16: Primitive data type: 1-dimensional array of int

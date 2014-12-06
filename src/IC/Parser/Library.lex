@@ -40,7 +40,6 @@ DecIntegerLiteral = 0+ | [1-9][0-9]*
 
 %%
  /* keywords */
-<YYINITIAL> "Library"			 { return token(Libsym.LIBRARY_KEYWORD, yytext()); }
 <YYINITIAL> "class"           	 { return token(Libsym.CLASS_KEYWORD, yytext()); }
 <YYINITIAL> "static"           	 { return token(Libsym.STATIC_KEYWORD, yytext()); }
 <YYINITIAL> "void"           	 { return token(Libsym.VOID_KEYWORD, yytext()); }
