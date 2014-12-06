@@ -128,11 +128,11 @@ DecIntegerLiteral = 0+ | [1-9][0-9]*
                                    return stringToken(sym.STRING_LITERAL, 
                                    string.toString()); }
   [^\n\r\"\t\\]+                   { string.append( yytext() ); }
-  \\n                            { string.append("\n"); }
-  \\t                            { string.append("\t"); }
-  \\r                            { string.append("\r"); }
-  \\\"                           { string.append("\""); }
-  \\                             { string.append("\\"); }
+  \\n                            { string.append('\n'); }
+  \\t                            { string.append('\t'); }
+  \\r                            { string.append('\r'); }
+  \\\"                           { string.append('\"'); }
+  \\\\                             { string.append('\\'); }
   
   LineTerminator				 { throw new LexicalError(yytext(), yyline+1, yycolumn+1); } /* unclosed literal string */ 
 }
