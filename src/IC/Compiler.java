@@ -4,14 +4,9 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 
 import java_cup.runtime.Symbol;
-import IC.AST.PrettyPrinter;
-import IC.AST.Program;
-import IC.Parser.Lexer;
-import IC.Parser.LexicalError;
-import IC.Parser.LibLexer;
-import IC.Parser.LibParser;
-import IC.Parser.Parser;
-import IC.Parser.SyntaxError;;
+import IC.AST.*;
+import IC.Parser.*;
+
 
 public class Compiler {
 
@@ -30,7 +25,12 @@ public class Compiler {
 				LibParser libParser = new LibParser(libScanner);
 
 				Symbol libParseSymbol = libParser.parse();
-				Program libRoot = (Program) libParseSymbol.value;
+				ICClass libRoot = (ICClass) libParseSymbol.value;
+				
+				
+//				// Pretty-print the program to System.out
+			//	PrettyPrinter printer = new PrettyPrinter(args[1].substring(2));
+			//	System.out.println(printer.visit(libRoot));
 				
 			}
 			
@@ -51,12 +51,7 @@ public class Compiler {
 		} catch (FileNotFoundException e) {
 			System.out.println(e);
 		} catch (LexicalError e) {
-			new LexicalError(e.getMessage(), e.getLine(), e.getColumn()).toString();
-		} catch (SyntaxError e) {
-			if (e.getLine() > 0)
-				new SyntaxError(e.getMessage(), e.getLine(), e.getColumn()).toString();
-            else
-                System.out.println("at end of input : syntax error; " + e.getMessage());
+			System.out.println(e.getMessage());
 		} catch (Exception e) {
 			//e.printStackTrace();
 		}
