@@ -229,8 +229,7 @@ class CUP$LibParser$actions {
 		int mlleft = ((java_cup.runtime.Symbol)CUP$LibParser$stack.elementAt(CUP$LibParser$top-1)).left;
 		int mlright = ((java_cup.runtime.Symbol)CUP$LibParser$stack.elementAt(CUP$LibParser$top-1)).right;
 		List<Method> ml = (List<Method>)((java_cup.runtime.Symbol) CUP$LibParser$stack.elementAt(CUP$LibParser$top-1)).value;
-		 RESULT = new ICClass(ckleft, cid.toString(), new ArrayList<Field>(),
-			ml);  
+		 RESULT = new ICClass(ckleft, cid.toString(), new ArrayList<Field>(), ml); 
               CUP$LibParser$result = parser.getSymbolFactory().newSymbol("libic",0, ((java_cup.runtime.Symbol)CUP$LibParser$stack.elementAt(CUP$LibParser$top-4)), ((java_cup.runtime.Symbol)CUP$LibParser$stack.peek()), RESULT);
             }
           return CUP$LibParser$result;
