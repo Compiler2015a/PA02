@@ -562,7 +562,7 @@ public class Parser extends java_cup.runtime.lr_parser {
 
 
 	/** Causes the parsr to print every token it reads.
-	 * This is useful for debugging.
+
 	 */
 	public boolean printTokens;
 	

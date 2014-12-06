@@ -21,7 +21,7 @@ parser code  {:
 		this.lexer = lexer;
 	}
 	
-		public void syntax_error(Symbol s)
+	public void syntax_error(Symbol s)
 	{
         StringBuilder sb = new StringBuilder();
         Token token = (Token)s;
@@ -76,11 +76,10 @@ scan with {:
 /* Terminals (tokens returned by the scanner). */
 terminal			VOID_KEYWORD, INT_KEYWORD, BOOLEAN_KEYWORD, STRING_KEYWORD;
 terminal			ID;
-terminal			CLASS_KEYWORD, CLASS_ID, LIBRARY_KEYWORD, STATIC_KEYWORD;
+terminal			CLASS_KEYWORD, CLASS_ID, STATIC_KEYWORD;
 terminal            LP, RP, LB, RB, LC, RC, COMMA, SEMICOLON;
 
 /* Non terminals */
-non terminal Program program;
 non terminal ICClass libic;
 non terminal LibraryMethod libmethod;
 non terminal List<Method> libmethod_list;
@@ -93,13 +92,9 @@ precedence left ID;
 precedence left LC, LP, LB;
 
 /* The grammar */
-program ::= libic:lib
-		{: List<ICClass> list = new ArrayList<ICClass>(); list.add(lib); RESULT = new Program(list); :}
-;
 
-libic ::= CLASS_KEYWORD:ck LIBRARY_KEYWORD:cid LB libmethod_list:ml RB
-		{: RESULT = new ICClass(ckleft, cid.toString(), new ArrayList<Field>(),
-			ml); :}
+libic ::= CLASS_KEYWORD:ck CLASS_ID:cid LB libmethod_list:ml RB
+		{: RESULT = new ICClass(ckleft, cid.toString(), new ArrayList<Field>(), ml); :}
 ;
 
 

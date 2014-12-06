@@ -6,7 +6,7 @@ import IC.AST.*;
 
 parser code  {:
 	/** Causes the parsr to print every token it reads.
-	 * This is useful for debugging.
+
 	 */
 	public boolean printTokens;
 	

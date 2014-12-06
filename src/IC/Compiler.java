@@ -16,6 +16,8 @@ public class Compiler {
 			System.err.println("Error: invalid arguments");
 			System.exit(-1);
 		}
+		
+		
 		try {
 			if(args.length == 2 && args[1].substring(0, 2).equals("-L")) { //if library required
 				//parse library file
@@ -28,9 +30,10 @@ public class Compiler {
 				ICClass libRoot = (ICClass) libParseSymbol.value;
 				
 				
-//				// Pretty-print the program to System.out
+			// Pretty-print the program to System.out
 			//	PrettyPrinter printer = new PrettyPrinter(args[1].substring(2));
 			//	System.out.println(printer.visit(libRoot));
+
 				
 			}
 			
@@ -44,6 +47,9 @@ public class Compiler {
 
 			Symbol parseSymbol = parser.parse();
 			Program ICRoot = (Program) parseSymbol.value;
+			
+			System.out.println("Parsed " + args[0] +" successfully!");
+			
 	//		 Pretty-print the program to System.out
 			PrettyPrinter printer = new PrettyPrinter(args[0]);
 			System.out.println(printer.visit(ICRoot));
